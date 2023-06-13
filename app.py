@@ -319,6 +319,22 @@ def delete_user():
 def useridwise_user():
     return user_useridwise()
 
+############################################################
+#                       workflow module 2                  #
+############################################################
+
+@app.route('/Assign_Workflow', methods=['POST'])
+def Assign_Workflow():
+    return AssignWorkflow()
+
+@app.route('/Projectwise_Workflow', methods=['POST'])
+def Projectwise_Workflow():
+    return ProjectwiseWorkflow()
+
+@app.route('/Create_Workflow', methods=['POST'])
+def Create_Workflow():
+    return CreateWorkflow()
+
     
 if __name__ == "__main__":
     app.run(debug=True,port=5000)

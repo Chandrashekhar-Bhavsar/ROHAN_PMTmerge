@@ -1,8 +1,6 @@
 from flask import Flask, jsonify, request
 import mysql.connector
 from flask_cors import CORS,cross_origin
-import bcrypt
-from flask_bcrypt import bcrypt
 from connection import *
 from queries import *
 from workflow import *
@@ -89,7 +87,6 @@ def GetWorkFloByName():
         return jsonify({"error": "bad values"}), 400
 
 
-
 def statusupdate():
     try:
         now = datetime.now()
@@ -152,5 +149,83 @@ def getworkflowussue():
         mydb.commit()
         logging.debug(dt_string+" querry executed successfully" )
         return jsonify({"message": "Workflow assigned to task successfully"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+    
+### new workflow added ###
+def AssignWorkflow():
+    try:
+        now = datetime.now()
+        dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
+        logging.debug(dt_string+" User has made a call for AssignWorkflow module api")
+        logging.debug(dt_string+" Inside the AssignWorkflow module api ")       
+        data = request.get_json()
+        logging.debug(dt_string+" payload recived from frontend is ",data)
+        project_id = data["project_id"]
+        task = data["task"]
+        defect = data["defect"]
+        cursor = mydb.cursor()
+        query1 = "INSERT INTO workflowconnection (project_id, workflow_name,issue_type) VALUES (%s, %s,%s)"
+        values1 = (project_id, task,"task")
+        cursor.execute(query1, values1)
+        mydb.commit()
+        query2 = "INSERT INTO workflowconnection (project_id, workflow_name,issue_type) VALUES (%s, %s,%s)"
+        values2 = (project_id, defect,"defect")
+        cursor.execute(query2, values2)
+        mydb.commit()
+        logging.debug(dt_string+" querry executed successfully" )
+        return jsonify({"message": "Workflow assigned to project successfully"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+    
+    
+def ProjectwiseWorkflow():
+    try:
+        now = datetime.now()
+        dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
+        logging.debug(dt_string+" User has made a call for ProjectwiseWorkflow module api")
+        logging.debug(dt_string+" Inside theProjectwiseWorkflow module api ")       
+        data = request.get_json()
+        logging.debug(dt_string+" payload recived from frontend is ",data)
+        project_id = data["project_id"]
+        cursor = mydb.cursor()
+        query = "select p.issue_type, p.workflow_name, w.workflow from workflowconnection p join workflow w on w.workflow_name=p.workflow_name where p.project_id=%s;"
+        values = (project_id,)
+        cursor.execute(query, values)
+        out=cursor.fetchall()
+        array_list=[]   
+        for i in out:
+            dis={"issue_type":i[0],"workflow_name":i[1],"workflow":i[2]}
+            array_list.append(dis)
+        logging.debug(dt_string+" querry executed successfully" )
+        return jsonify({"message": "Workflow assigned to project successfully"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+    
+
+def CreateWorkflow():
+    try:
+        now = datetime.now()
+        dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
+        logging.debug(dt_string+" User has made a call for CreateWorkflow module api")
+        logging.debug(dt_string+" Inside the CreateWorkflow module api ")       
+        data = request.get_json()
+        logging.debug(dt_string+" payload recived from frontend is ",data)
+        project_id = data["project_id"]
+        type = str(data["type"])
+        workflowname=data["wfn"]
+        array=str(data["array"])
+        cursor = mydb.cursor()
+        query1 = "INSERT INTO workflowconnection (project_id, workflow_name,issue_type) VALUES (%s, %s,%s)"
+        values1 = (project_id, workflowname,type)
+        cursor.execute(query1, values1)
+        mydb.commit()
+        query2 = "INSERT INTO workflow (workflow_name,workflow) VALUES (%s, %s)"
+        values2 = (workflowname,array)
+        cursor.execute(query2, values2)
+        mydb.commit()
+        
+        logging.debug(dt_string+" querry executed successfully" )
+        return jsonify({"message": "workflow added successfully"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 400
