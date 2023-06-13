@@ -1,0 +1,77 @@
+import requests
+import json
+import unittest 
+
+
+class TestIssueByMonthApi(unittest.TestCase):
+    def test_get_number_of_issue_by_month_api_testing_by_giving_right_parameter(self):
+        print("#"*50)   
+        print("Test case id: TCIBM01")
+        print("Test case name: Checking for RIGHT Parameter ")
+        print("Inside the Test Case ")
+        # Define the API endpoint for adding a new user
+        API_ENDPOINT_post = "http://127.0.0.1:5000/IssueByMonth"
+        # Prepare the data for the new user
+        data = {"project_id":202}
+        # Set the headers for the request
+        headers = {'Content-type': 'application/json'}
+        # Send a POST request to the API endpoint to add the new user
+        r = requests.get(url=API_ENDPOINT_post, data=json.dumps(data), headers=headers)
+        # Print the response status code
+        print("response error code we got",r.status_code)
+        # Get the response content as JSON
+        pastebin_url = r.json()
+        # Print the JSON response
+        print("response content we got",pastebin_url)
+        print(" ")
+        # Assert that the response status code is 200 (OK)
+        self.assertEqual(r.status_code, 200)
+
+    def test_get_number_of_issue_by_month_api_testing_by_giving_missing_parameter(self):
+        print("#"*50)   
+        print("Test case id: TCIBM02")
+        print("Test case name: Checking for MISSING Parameter ")
+        print("Inside the Test Case ")
+        # Define the API endpoint for adding a new user
+        API_ENDPOINT_post = "http://127.0.0.1:5000/IssueByMonth"
+        # Prepare the data for the new user
+        data = {}
+        # Set the headers for the request
+        headers = {'Content-type': 'application/json'}
+        # Send a POST request to the API endpoint to add the new user
+        r = requests.get(url=API_ENDPOINT_post, data=json.dumps(data), headers=headers)
+        # Print the response status code
+        print("response error code we got",r.status_code)
+        # Get the response content as JSON
+        pastebin_url = r.json()
+        # Print the JSON response
+        print("response content we got",pastebin_url)
+        print(" ")
+        # Assert that the response status code is 200 (OK)
+        self.assertEqual(r.status_code, 400)
+
+    def test_get_number_of_issue_by_month_api_testing_by_giving_Wrong_datatype_parameter(self):
+        print("#"*50)   
+        print("Test case id: TCIBM03")
+        print("Test case name: Checking for wrong data type Parameter ")
+        print("Inside the Test Case ")
+        # Define the API endpoint for adding a new user
+        API_ENDPOINT_post = "http://127.0.0.1:5000/IssueByMonth"
+        # Prepare the data for the new user
+        data = {"project_id":"*&^%$"}
+        # Set the headers for the request
+        headers = {'Content-type': 'application/json'}
+        # Send a POST request to the API endpoint to add the new user
+        r = requests.get(url=API_ENDPOINT_post, data=json.dumps(data), headers=headers)
+        # Print the response status code
+        print("response error code we got",r.status_code)
+        # Get the response content as JSON
+        pastebin_url = r.json()
+        # Print the JSON response
+        print("response content we got",pastebin_url)
+        print(" ")
+        # Assert that the response status code is 200 (OK)
+        self.assertEqual(r.status_code, 400)
+
+if __name__ == "__main__":
+    unittest.main()
