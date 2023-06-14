@@ -195,7 +195,9 @@ def count_defects():
         
 
 
-
+@app.route('/GetEmails', methods=['GET'])
+def GetEmails():
+    return getemails()
    
 
 
