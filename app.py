@@ -211,12 +211,12 @@ def deletecomment():
 
 @app.route('/comment_add', methods=['POST'])
 def comment_add():
-    return commentadd()
+    return add_comment()
 
 
 @app.route('/display_comment', methods=['POST'])
 def display_comment():
-    return displaycomments()
+    return display_comments()
     
 
 ############################ CREATE ISSUE DETAILS #################################
