@@ -69,6 +69,7 @@ def GetWorkFloByName():
         logging.debug(dt_string+" Inside the GetWorkfloByName api ")
         logging.debug(dt_string+" payload received from frontend is ")
         data = request.get_json()
+        print(data)
         wfn=data["wfn"]
         query = "Select workflow from workflow where workflow_name=%s"
         values=(wfn,)

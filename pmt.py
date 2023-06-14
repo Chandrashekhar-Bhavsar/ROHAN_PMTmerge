@@ -450,7 +450,7 @@ def get_users_from_project():
         data = request.get_json()
         project_id = data['project_id']
         cursor = mydb.cursor()
-        query = "SELECT Users.user_ID, Users.role, Users.Name, Users.Email_ID FROM Users JOIN project_member ON Users.user_ID = project_member.user_ID WHERE project_member.Project_ID = %s;"
+        query = "SELECT Users.user_ID, Users.roles, Users.Name, Users.Email_ID FROM Users JOIN project_member ON Users.user_ID = project_member.user_ID WHERE project_member.Project_ID = %s;"
         values = (project_id,)
         cursor.execute(query, values)
         users = cursor.fetchall()
