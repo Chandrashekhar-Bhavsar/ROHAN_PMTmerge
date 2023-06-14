@@ -515,7 +515,7 @@ def deleteprojects(project_id):
         cursor.execute(project_mem, values)
 
         # Delete related records from projectworkflow_connection table
-        projectwf_query = "DELETE FROM Projectworkflow_Connection WHERE project_id = %s;"
+        projectwf_query = "DELETE FROM workflowconnection WHERE project_id = %s;"
         values = (project_id,)
         cursor.execute(projectwf_query, values)
         

@@ -212,10 +212,11 @@ def CreateWorkflow():
         logging.debug(dt_string+" payload recived from frontend is ",data)
         project_id = data["project_id"]
         type = str(data["type"])
+        print(type)
         workflowname=data["wfn"]
         array=str(data["array"])
         cursor = mydb.cursor()
-        query1 = "INSERT INTO workflowconnection (project_id, workflow_name,issue_type) VALUES (%s, %s,%s)"
+        query1 = "INSERT INTO workflowconnection values (project_id=%s ,workflow_name=%s,issue_type=%s);"
         values1 = (project_id, workflowname,type)
         cursor.execute(query1, values1)
         mydb.commit()
