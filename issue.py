@@ -120,7 +120,7 @@ def updateTask():
         logging.debug("Values Accepted")
 
         cursor = mydb.cursor()
-        query = "SELECT COUNT(*) FROM task WHERE task_id=%s"
+        query = "SELECT COUNT(*) FROM Task WHERE task_id=%s"
         cursor.execute(query, (task_id,))
         count = cursor.fetchone()[0]
 
