@@ -10,7 +10,6 @@ from queries import *
 from workflow import *
 from Filter import *
 from connection import *
-from Comments_Module import *
 from issue import *
 from pmt import *
 from UserManagement_module import *
