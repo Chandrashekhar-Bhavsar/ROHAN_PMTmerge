@@ -653,7 +653,7 @@ def deletetask(task_id):
 
 def createdefects(issue_id, title, description, severity, defect_sd, defect_ed, priority, estimated_time):
         logging.debug("Inside create defects function")
-        query = "INSERT INTO Defect (issue_id, title, description, severity, defect_sd, defect_ed, priority, estimated_time) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+        query = "INSERT INTO defect (issue_id, title, description, severity, defect_sd, defect_ed, priority, estimated_time) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
         values = (issue_id, title, description, severity, defect_sd, defect_ed, priority, estimated_time)
         cursor.execute(query, values)
         mydb.commit()
