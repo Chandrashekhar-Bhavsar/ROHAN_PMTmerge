@@ -97,8 +97,8 @@ def create_projects():
         project_description = data['project_description']
         planned_sd = data['planned_sd']
         planned_ed = data['planned_ed']
-        actual_sd = '2020-01-01 10:10:10'#data['actual_sd']
-        actual_ed = '2020-01-01 10:10:10'#data['actual_ed']
+        actual_sd = '2020-01-01'#data['actual_sd']
+        actual_ed = '2020-01-01'#data['actual_ed']
         planned_hours = "0" #data['planned_hours']
         actual_hours = "0"#data['actual_hours']""
         status = "To_Do"#data['status']
@@ -106,8 +106,6 @@ def create_projects():
         client_name = data['client_name']
         risk = data['risk']
         mitigation = data['mitigation']
-        workflowTask=data['workflowTask']
-        workflowDefects2=data['workflowDefects']
         logging.debug(dt_string+"Calling create project query function ")
         return create_project_query(User_id,project_name, project_description, planned_sd, planned_ed, actual_sd, actual_ed,
                                     planned_hours, actual_hours, status, project_lead, client_name, risk, mitigation)

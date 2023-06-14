@@ -335,6 +335,10 @@ def Projectwise_Workflow():
 def Create_Workflow():
     return CreateWorkflow()
 
+@app.route('/DeleteWorkflow', methods=['POST'])
+def DeleteWorkflow():
+    return Delete_Workflow()
+
     
 if __name__ == "__main__":
     app.run(debug=True,port=5000)

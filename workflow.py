@@ -228,18 +228,35 @@ def CreateWorkflow():
     except Exception as e:
         return jsonify({"error": str(e)}), 400
     
-    
-def updatedefects(title, description, severity, defect_sd, defect_ed, priority, estimated_time, file_attachment, defect_id, issue_id):
+def Delete_Workflow():
     try:
-        logging.debug("Inside update defects function")
-        query = "UPDATE Defect SET title=%s, description = %s,severity=%s,defect_sd=%s, defect_ed=%s, priority=%s, estimated_time=%s, file_attachment=%s WHERE defect_id=%s and issue_id=%s"
-        values = (title, description, severity, defect_sd, defect_ed, priority, estimated_time, file_attachment, defect_id, issue_id)
-        cursor.execute(query, values)
+        now = datetime.now()
+        dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
+        logging.debug(dt_string+" User has made a call for Delete_Workflow module api")
+        logging.debug(dt_string+" Inside the Delete_Workflow module api ")       
+        data = request.get_json()
+        logging.debug(dt_string+" payload recived from frontend is ",data)
+        project_id = data["project_id"]
+        workflow_name = data["workflow_name"]
+        cursor = mydb.cursor()
+        query1 = "delete from workflowconnection where Workflow_name=%s and project_id=%s"
+        values1 = (project_id, workflow_name)
+        cursor.execute(query1, values1)
         mydb.commit()
-        logging.debug("Defect updated: defect_id={}, issue_id={},title={}, description={}, severity={} ,defect_sd={}, defect_ed={}, priority={}, estimated_time={}, file_attachment={}".format(title, description, severity, defect_sd, defect_ed, priority, estimated_time, file_attachment, defect_id, issue_id))
-        return jsonify({"message": "Defect updated successfully"}), 200
+        query2 = "delete from workflow where workflow_name= %s"
+        values2 = (workflow_name,)
+        cursor.execute(query2, values2)
+        mydb.commit()
+        
+        logging.debug(dt_string+" querry executed successfully" )
+        return jsonify({"message": "workflow deleted successfully"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 400
+    
+    
+
+    
+
     
     
     
