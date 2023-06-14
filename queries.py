@@ -663,15 +663,7 @@ def createdefects(issue_id, title, description, severity, defect_sd, defect_ed, 
 
 ############################ UPDATE DEFECT #################################
 
-def updatedefect(description, status, severity, defect_sd, defect_ed, planned_hours, actual_hours,defect_id, issue_id):
-        
-        query = "UPDATE defect SET description = %s,status = %s,severity = %s, defect_sd=%s, defect_ed=%s, planned_hours=%s, actual_hours=%s WHERE defect_id=%s and issue_id=%s"
-        values = (description, status,severity, defect_sd, defect_ed, planned_hours, actual_hours,defect_id, issue_id)
-        cursor.execute(query, values)
-        mydb.commit()
 
-        logging.debug("Defect updated: defect_id={}, issue_id={}, description={}, status={},severity={} ,defect_sd={}, defect_ed={}, planned_hours={}, actual_hours={}".format(defect_id, issue_id, description, status,severity, defect_sd, defect_ed, planned_hours, actual_hours))
-        return jsonify({"message": "Defect updated successfully"}), 200
 
 ############################ DELETE DEFECT #################################
 

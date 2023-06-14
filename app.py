@@ -283,7 +283,7 @@ def create_defect():
 @app.route('/update_defect', methods=['POST'])
 def update_defect():
 
-    return updatedefect()
+    return updateDefect()
 
 ############################ DELETE DEFECT #################################
 
