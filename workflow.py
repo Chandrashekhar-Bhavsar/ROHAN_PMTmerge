@@ -197,7 +197,7 @@ def ProjectwiseWorkflow():
             dis={"issue_type":i[0],"workflow_name":i[1],"workflow":i[2]}
             array_list.append(dis)
         logging.debug(dt_string+" querry executed successfully" )
-        return jsonify({"message": "Workflow assigned to project successfully"}), 200
+        return jsonify(array_list), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 400
     
@@ -216,7 +216,7 @@ def CreateWorkflow():
         workflowname=data["wfn"]
         array=str(data["array"])
         cursor = mydb.cursor()
-        query1 = "INSERT INTO workflowconnection values (project_id=%s ,workflow_name=%s,issue_type=%s);"
+        query1 = "INSERT INTO workflowconnection (project_id,workflow_name,issue_type) values(%s,%s,%s) ;"
         values1 = (project_id, workflowname,type)
         cursor.execute(query1, values1)
         mydb.commit()
