@@ -164,9 +164,7 @@ def user_details_project():
     return get_users_from_project()
 
 
-@app.route('/add_project_comment', methods=['POST'])
-def add_project_comment():
-    return add_projectcomment()
+
 
 
 @app.route('/get_issue_detailsss', methods=['POST'])
@@ -189,30 +187,19 @@ def count_defects():
     return get_defect_count()
    
 
-@app.route('/add_issue_comment', methods=['POST'])
-def add_issue_comment():
-    return add_issuecomment()
+
+
+
     
 
-@app.route('/display_projectwise_comments', methods=['POST'])
-def display_projectwise_comments():
-    
-      return  display_projectwisecomments()
-    
 
-@app.route('/display_issuewise_comments', methods=['POST'])
-def display_issuewise_comments():
-        return display_issuewisecomments()
         
 
-@app.route('/update_projectwise_comments', methods=['POST'])
-def update_projectwise_comments():
-    return update_projectwisecomments()
+
+
    
 
-@app.route('/update_issuewise_comments', methods=['POST'])
-def update_issuewise_comments():
-    return update_issuewisecomments()
+
     
 @app.route('/show_user', methods=['GET'])
 def show_user():
