@@ -251,7 +251,7 @@ def delete_issue():
 @app.route('/create_task', methods=['POST'])
 def create_task():
     # Call the create_task function from the queries module with the required arguments
-    return createtask()  # Pass the necessary arguments
+    return createTask()  # Pass the necessary arguments
     
 
 ############################ UPDATE TASK #################################
@@ -259,7 +259,7 @@ def create_task():
 @app.route('/update_task', methods=['POST'])
 def update_task():
     # Call the update_task function from the queries module with the required arguments
-    return updatetask()  # Pass the necessary arguments
+    return updateTask()  # Pass the necessary arguments
     
 
 ############################ DELETE TASK #################################
@@ -274,7 +274,7 @@ def delete_task():
 @app.route('/create_defect', methods=['POST'])
 def create_defect():
 
-    return createdefect()
+    return createDefect()
 
 ############################ UPDATE DEFECT#################################
 

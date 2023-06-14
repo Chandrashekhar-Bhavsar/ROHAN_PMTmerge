@@ -531,10 +531,10 @@ def deleteprojects(project_id):
 
 ############################ CREATE TASK #################################
 
-def createtask(issue_id, description, status, task_sd, task_ed, planned_hours, actual_hours,priority):
-        
-        query = "INSERT INTO task (issue_id, description, status, task_sd, task_ed, planned_hours, actual_hours, priority) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-        values = (issue_id, description, status, task_sd, task_ed, planned_hours, actual_hours,priority)
+def createtask(issue_id, title, description, task_sd, task_ed, estimated_time, priority):
+        logging.debug("Inside createtask function")
+        query = "INSERT INTO Task (issue_id,title, description, task_sd, task_ed, estimated_time, priority) VALUES (%s, %s, %s, %s, %s, %s,%s)"
+        values = (issue_id, title, description, task_sd, task_ed, estimated_time, priority)
         cursor.execute(query, values)
         mydb.commit()
 
@@ -634,14 +634,14 @@ def createtask(issue_id, description, status, task_sd, task_ed, planned_hours, a
 
 ############################ UPDATE TASK #################################
 
-def updatetask(description, status, task_sd, task_ed, planned_hours, actual_hours,priority,task_id, issue_id):
-        
-        query = "UPDATE task SET description = %s,status = %s,task_sd=%s, task_ed=%s, planned_hours=%s, actual_hours=%s, priority=%s WHERE task_id=%s and issue_id=%s"
-        values = (description, status, task_sd, task_ed, planned_hours, actual_hours,priority,task_id, issue_id)
+def updatetask(title, description, task_sd, task_ed, estimated_time, priority, file_attachment, task_id, issue_id):
+        logging.debug("Inside update task function")
+        query = "UPDATE Task SET title = %s, description = %s,task_sd=%s, task_ed=%s, estimated_time=%s, priority=%s, file_attachment=%s WHERE task_id=%s and issue_id=%s"
+        values = ( title, description, task_sd, task_ed, estimated_time, priority, file_attachment, task_id, issue_id)
         cursor.execute(query, values)
         mydb.commit()
 
-        logging.debug("Task updated: task_id={}, issue_id={}, description={}, status={}, task_sd={}, task_ed={}, planned_hours={}, actual_hours={}, priority={}".format(task_id, issue_id, description, status, task_sd, task_ed, planned_hours, actual_hours, priority))
+
         return jsonify({"message": "Task updated successfully"}), 200
 
 ############################ DELETE TASK #################################
@@ -658,14 +658,14 @@ def deletetask(task_id):
 
 ############################ CREATE DEFECT #################################
 
-def createdefect(issue_id, description, status,severity, defect_sd, defect_ed, planned_hours, actual_hours):
-
-        query = "INSERT INTO defect (issue_id, description, status, severity, defect_sd, defect_ed, planned_hours, actual_hours) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-        values = (issue_id, description, status,severity, defect_sd, defect_ed, planned_hours, actual_hours)
+def createdefects(issue_id, title, description, severity, defect_sd, defect_ed, priority, estimated_time):
+        logging.debug("Inside create defects function")
+        query = "INSERT INTO Defect (issue_id, title, description, severity, defect_sd, defect_ed, priority, estimated_time) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+        values = (issue_id, title, description, severity, defect_sd, defect_ed, priority, estimated_time)
         cursor.execute(query, values)
         mydb.commit()
 
-        logging.debug("Defect created: issue_id={}, description={}, status={}, severity={}, defect_sd={}, defect_ed={}, planned_hours={}, actual_hours={}".format(issue_id, description, status, defect_sd, defect_ed, planned_hours, actual_hours))
+        logging.debug("Defect created: issue_id={},title={}, description={}, severity={}, defect_sd={}, defect_ed={}, priority={}, estimated_time={}".format(issue_id,title, description,severity, defect_sd, defect_ed, priority, estimated_time))
         return jsonify({"message": "Defect created successfully"}), 200
 
 ############################ UPDATE DEFECT #################################
