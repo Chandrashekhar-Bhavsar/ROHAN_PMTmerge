@@ -542,14 +542,7 @@ def createtask(issue_id, title, description, task_sd, task_ed, estimated_time, p
 
 ############################ UPDATE TASK #################################
 
-def updatetask(description, status, task_sd, task_ed, planned_hours, actual_hours,priority,task_id, issue_id):
-        
-        query = "UPDATE task SET description = %s,status = %s,task_sd=%s, task_ed=%s, planned_hours=%s, actual_hours=%s, priority=%s WHERE task_id=%s and issue_id=%s"
-        values = (description, status, task_sd, task_ed, planned_hours, actual_hours,priority,task_id, issue_id)
-        cursor.execute(query, values)
-        mydb.commit()
 
-        return jsonify({"message": "Task updated successfully"}), 200
 
 ############################ DELETE TASK #################################
 
@@ -621,16 +614,16 @@ def deleteissue(issue_id):
         return jsonify({"message": "Issue Deleted successfully"}), 200
 
 ############################ CREATE TASK #################################
-
+'''
 def createtask(issue_id, description, status, task_sd, task_ed, planned_hours, actual_hours,priority):
         
-        query = "INSERT INTO task (issue_id, description, status, task_sd, task_ed, planned_hours, actual_hours, priority) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+        query = "INSERT INTO Task (issue_id, description, status, task_sd, task_ed, planned_hours, actual_hours, priority) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
         values = (issue_id, description, status, task_sd, task_ed, planned_hours, actual_hours,priority)
         cursor.execute(query, values)
         mydb.commit()
 
         logging.debug("Task created: issue_id={}, description={}, status={}, task_sd={}, task_ed={}, planned_hours={}, actual_hours={}, priority={}".format(issue_id, description, status, task_sd, task_ed, planned_hours, actual_hours, priority))
-        return jsonify({"message": "Task created successfully"}), 200
+        return jsonify({"message": "Task created successfully"}), 200'''
 
 ############################ UPDATE TASK #################################
 
@@ -947,15 +940,6 @@ def deleteissues(issue_id):
 
 ############################ CREATE DEFECT #################################
 
-def createdefects(issue_id, title, description, severity, defect_sd, defect_ed, priority, estimated_time):
-        logging.debug("Inside create defects function")
-        query = "INSERT INTO Defect (issue_id, title, description, severity, defect_sd, defect_ed, priority, estimated_time) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-        values = (issue_id, title, description, severity, defect_sd, defect_ed, priority, estimated_time)
-        cursor.execute(query, values)
-        mydb.commit()
-
-        logging.debug("Defect created: issue_id={},title={}, description={}, severity={}, defect_sd={}, defect_ed={}, priority={}, estimated_time={}".format(issue_id,title, description,severity, defect_sd, defect_ed, priority, estimated_time))
-        return jsonify({"message": "Defect created successfully"}), 200
 
 
 def updatedefects(title, description, severity, defect_sd, defect_ed, priority, estimated_time, file_attachment, defect_id, issue_id):
@@ -964,8 +948,10 @@ def updatedefects(title, description, severity, defect_sd, defect_ed, priority, 
         values = (title, description, severity, defect_sd, defect_ed, priority, estimated_time, file_attachment, defect_id, issue_id)
         cursor.execute(query, values)
         mydb.commit()
+
+
         logging.debug("Defect updated: defect_id={}, issue_id={},title={}, description={}, severity={} ,defect_sd={}, defect_ed={}, priority={}, estimated_time={}, file_attachment={}".format(title, description, severity, defect_sd, defect_ed, priority, estimated_time, file_attachment, defect_id, issue_id))
-        return jsonify({"message": "Defect updated successfully"}), 20
+        return jsonify({"message": "Defect updated successfully"}), 200
 
 
 def issue_member(issue_id, user_id,project_id):
