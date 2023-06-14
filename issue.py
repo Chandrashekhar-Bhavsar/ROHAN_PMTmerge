@@ -2,8 +2,6 @@ from itertools import count
 from flask import Flask, jsonify, request
 import mysql.connector
 from flask_cors import CORS,cross_origin
-import bcrypt
-from flask_bcrypt import bcrypt
 from connection import *
 from queries import *
 import datetime

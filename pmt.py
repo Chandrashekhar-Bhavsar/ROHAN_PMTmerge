@@ -25,6 +25,23 @@ file = open("myfile.txt","w")
                                         # login
 ###############################################################################################################
 
+def getemails():
+    try:
+        now = datetime.now()
+        dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
+        logging.debug(dt_string + " User has made a call to getemails from a Users")
+        cursor = mydb.cursor()
+        query = "SELECT email_id from Users;"
+        cursor.execute(query, )
+        users = cursor.fetchall()
+        logging.debug(dt_string + " Email Checking Query executed successfully")
+        logging.debug(dt_string + " Query result is ", users)
+        return jsonify({'msg': users}), 200
+ 
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400       
+        
+
 def pm_loginn():
     try:
         now = datetime.now()
