@@ -875,3 +875,131 @@ def displaycomments(id):
             return jsonify(comments_list),200
 
 
+
+def createissues(issue_name, description, type, status):
+
+        query = "INSERT INTO Issue_Details (issue_name, description, type, status) VALUES (%s, %s, %s, %s)"
+        values = (issue_name, description, type, status)
+        cursor.execute(query, values)
+        mydb.commit()
+
+        issue_id = cursor.lastrowid
+
+        response = {
+            "message": "Issue Created Successfully",
+            "issue_id": issue_id
+        }
+
+        return jsonify({"message": "Issue Created Successfully", "issue_id": issue_id}), 200
+
+
+########################### UPDATE ISSUE DETAILS #################################
+
+def updateissues(status, issue_id):
+   
+        logging.debug("Inside updateissues function")
+        
+        query = "UPDATE Issue_Details SET status = %s WHERE issue_id=%s"
+        values = (status, issue_id)
+        cursor.execute(query, values)
+        mydb.commit()
+
+        logging.debug("Issue updated: status={}".format(status))
+        return jsonify({"message": "Issue Updated Successfully"}), 200
+
+
+
+############################ DELETE ISSUE DETAILS #################################
+
+def deleteissues(issue_id):
+        logging.debug("Inside deleteissues function")
+        
+
+        check_query = "SELECT * FROM Issue_Details WHERE issue_id = %s"
+        cursor.execute(check_query, (issue_id,))
+        result = cursor.fetchone()
+        if result is None:
+            return jsonify({"error": "Issue not found"}), 400
+        
+        # Delete related records from defect table
+        defect_query = "DELETE FROM Defect WHERE issue_id = %s"
+        values = (issue_id,)
+        cursor.execute(defect_query, values)
+        
+        # Delete related records from Task table
+        task_query = "DELETE FROM Task WHERE issue_id = %s"
+        cursor.execute(task_query, values)
+
+        
+        # Delete related records from issue_workflow table
+        issuewf_query = "DELETE FROM Issueworkflow_Connection WHERE issue_id = %s"
+        cursor.execute(issuewf_query, values)
+    
+        # Delete project details from issue_details table
+        query = "DELETE FROM Issue_Details WHERE issue_id = %s"
+        cursor.execute(query, values)
+        mydb.commit()
+
+        
+        logging.debug("Issue deleted: issue_id={}".format(issue_id))
+        return jsonify({"message": "Issue Deleted successfully"}), 200
+
+
+############################ CREATE DEFECT #################################
+
+def createdefects(issue_id, title, description, severity, defect_sd, defect_ed, priority, estimated_time):
+        logging.debug("Inside create defects function")
+        query = "INSERT INTO Defect (issue_id, title, description, severity, defect_sd, defect_ed, priority, estimated_time) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+        values = (issue_id, title, description, severity, defect_sd, defect_ed, priority, estimated_time)
+        cursor.execute(query, values)
+        mydb.commit()
+
+        logging.debug("Defect created: issue_id={},title={}, description={}, severity={}, defect_sd={}, defect_ed={}, priority={}, estimated_time={}".format(issue_id,title, description,severity, defect_sd, defect_ed, priority, estimated_time))
+        return jsonify({"message": "Defect created successfully"}), 200
+
+
+def updatedefects(title, description, severity, defect_sd, defect_ed, priority, estimated_time, file_attachment, defect_id, issue_id):
+        logging.debug("Inside update defects function")
+        query = "UPDATE Defect SET title=%s, description = %s,severity=%s,defect_sd=%s, defect_ed=%s, priority=%s, estimated_time=%s, file_attachment=%s WHERE defect_id=%s and issue_id=%s"
+        values = (title, description, severity, defect_sd, defect_ed, priority, estimated_time, file_attachment, defect_id, issue_id)
+        cursor.execute(query, values)
+        mydb.commit()
+        logging.debug("Defect updated: defect_id={}, issue_id={},title={}, description={}, severity={} ,defect_sd={}, defect_ed={}, priority={}, estimated_time={}, file_attachment={}".format(title, description, severity, defect_sd, defect_ed, priority, estimated_time, file_attachment, defect_id, issue_id))
+        return jsonify({"message": "Defect updated successfully"}), 20
+
+
+def issue_member(issue_id, user_id,project_id):
+
+        logging.debug("Inside issue member function")
+        query = "INSERT INTO Issue_Member (issue_id, user_id,project_id) VALUES (%s, %s, %s)"
+        values = (issue_id, user_id,project_id)
+        cursor.execute(query, values)
+        mydb.commit()
+
+
+        logging.debug("Defect deleted: issue_id={},user_id={},project_id={}".format(issue_id, user_id,project_id))
+        return jsonify({"message": "Issue Members assigned Successfully"}), 200
+
+
+def issuemembers_update(issue_id, user_id, project_id,issueMember_id):
+
+        logging.debug("Inside update issuemembers_update function")
+        query = "UPDATE Issue_Member SET issue_id = %s,user_id = %s, project_id=%s WHERE issueMember_id=%s"
+        values = (issue_id, user_id, project_id,issueMember_id)
+        cursor.execute(query, values)
+        mydb.commit()
+
+        logging.debug("Issue Member Updated: issue_id={}, user_id={}, project_id={},issueMember_id={}".format(issue_id, user_id, project_id,issueMember_id))
+        return jsonify({"message": "Issue_Member Updated Successfully"}), 200
+
+def issuemembers(issueMember_id):
+
+        logging.debug("Inside delete issuemembers function")
+        query = "DELETE FROM Issue_Member WHERE issueMember_id = %s"
+        values = (issueMember_id,)
+        cursor.execute(query, values)
+
+        mydb.commit()
+
+        logging.debug("Issue Member deleted: issueMember_id={}".format(issueMember_id))
+        return jsonify({"message": "Issue Member Deleted successfully"}), 200

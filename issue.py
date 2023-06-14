@@ -16,21 +16,17 @@ logging.basicConfig(level=logging.DEBUG)
 ############################ CREATE ISSUE DETAILS #################################
 
 
-
-def createissue():
+def createIssue():
     try:
         data = request.get_json()
-        Issue_name = data['Issue_name']
-        Description = data['Description']
+        issue_name = data['issue_name']
+        description = data['description']
+        type = data['type']
+        status = data['status']
 
-        #cursor = mydb.cursor()
 
-        #query = "INSERT INTO issue_details (issue_name, description) VALUES (%s, %s)"
-        #values = (issue_name, description)
-        #cursor.execute(query, values)
-        #mydb.commit()
-        return create_issue(Issue_name, Description)
-        
+        return createissues(issue_name, description, type, status)
+
     except KeyError as e:
         # Handle missing key in the request data
         logging.error("Missing key in request data: {}".format(str(e)))
@@ -39,284 +35,253 @@ def createissue():
 
 ############################ UPDATE ISSUE DETAILS #################################
 
-def updateissue():
+def updateIssue():
     try:
-        data = request.get_json()
-        issue_id = data['issue_id']
-        issue_name = data['issue_name']
-        description = data['description']
-        cursor = mydb.cursor()
-        query = "SELECT COUNT(*) FROM issue_details WHERE issue_id=%s"
-        cursor.execute(query, (issue_id,))
-        count = cursor.fetchone()[0]
+            logging.debug("Entered the values")
+            data = request.get_json()
+            issue_id = data['issue_id']
+            status = data['status']
+            logging.debug("Values Accepted")
 
-        if count == 0:
-            return jsonify({"error": "Issue not found"}), 400
+
+
+            cursor = mydb.cursor()
+            query = "SELECT COUNT(*) FROM issue_details WHERE issue_id=%s"
+            cursor.execute(query, (issue_id,))
+            count = cursor.fetchone()[0]
+
+            if count == 0:
+                return jsonify({"error": "Issue not found"}), 400
         
-        query = "UPDATE issue_details SET issue_name = %s,description = %s WHERE issue_id=%s"
-        values = (issue_name, description, issue_id)
-        cursor.execute(query, values)
-        mydb.commit()
-
-        return jsonify({"message": "Issue Updated Successfully"}), 200
+            return updateissues(status, issue_id)
    
 
     except KeyError as e:
-        # Handle missing required parameter
-        return jsonify({"error": "Missing required parameter: {}".format(str(e))}), 400
-
+        # Handle missing key in the request data
+        logging.error("Missing key in request data: {}".format(str(e)))
+        return jsonify({"error": "Missing key in request data: " + str(e)}), 400
     
 
 ############################ DELETE ISSUE DETAILS #################################
 
-def deleteissue():
+def deleteIssue():
     try:
+        logging.debug("Entered the values")
         data = request.get_json()
         issue_id = data['issue_id']
-        cursor = mydb.cursor()
+        logging.debug("Values Accepted")
 
-        # Delete related records from issue_member table
-        #member_query = "DELETE FROM issue_member WHERE issue_id = %s"
-        #values = (issue_id,)
-        #cursor.execute(member_query, values)
 
-        # Delete related records from defect table
-        #defect_query = "DELETE FROM defect WHERE issue_id = %s"
-        #cursor.execute(defect_query, values)
-
-        # Delete related records from Task table
-        #task_query = "DELETE FROM task WHERE issue_id = %s"
-        #cursor.execute(task_query, values)
-
-        # Delete related records from file table
-        #file_query = "DELETE FROM file WHERE issue_id = %s"
-        #cursor.execute(file_query, values)
-
-        # Delete related records from issue_workflow table
-        #issuewf_query = "DELETE FROM issueworkflow_connection WHERE issue_id = %s"
-        #cursor.execute(issuewf_query, values)
-
-        # Delete project details from issue_details table
-        #query = "DELETE FROM issue_details WHERE issue_id = %s"
-        #cursor.execute(query, values)
-        #mydb.commit()
-
-        
-        return deleteissue(issue_id)
-
+        return deleteissues(issue_id)
+    
     except KeyError as e:
         # Handle missing key in the request data
-        logging.error("Missing key in request data: " + str(e))
+        logging.error("Missing key in request data: {}".format(str(e)))
         return jsonify({"error": "Missing key in request data: " + str(e)}), 400
-
-    except Exception as e:
-        # Handle any other unexpected exceptions
-        logging.error("An error occurred: " + str(e))
-        return jsonify({"error": "An error occurred: " + str(e)}), 500
     
+
 
 ############################ CREATE TASK #################################
 
-def createtask():
+def createTask():
     try:
+        logging.debug("Entered the values")
         data = request.get_json()
         issue_id = data['issue_id']
+        title = data['title']
         description = data['description']
-        status = data['status']
         task_sd = data['task_sd']
         task_ed = data['task_ed']
-        planned_hours = data['planned_hours']
-        actual_hours = data['actual_hours']
+        estimated_time = data['estimated_time']
         priority = data['priority']
-       
+        logging.debug("Values Accepted")
 
-        cursor = mydb.cursor()
-        #query = "INSERT INTO task (issue_id, description, status, task_sd, task_ed, planned_hours, actual_hours, priority) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-        #values = (issue_id, description, status, task_sd, task_ed, planned_hours, actual_hours,priority)
-        #cursor.execute(query, values)
-        #mydb.commit()
-
-        
-        return createtask(issue_id, description, status, task_sd, task_ed, planned_hours, actual_hours,priority)
+        return createtask(issue_id, title, description, task_sd, task_ed, estimated_time, priority)
 
     except KeyError as e:
         # Handle missing key in the request data
-        logging.error("Missing key in request data: " + str(e))
+        logging.error("Missing key in request data: {}".format(str(e)))
         return jsonify({"error": "Missing key in request data: " + str(e)}), 400
 
-    except Exception as e:
-        # Handle any other unexpected exceptions
-        logging.error("An error occurred: " + str(e))
-        return jsonify({"error": "An error occurred: " + str(e)}), 500
-    
+
 ############################ UPDATE TASK #################################
 
-def update_task():
+def updateTask():
     try:
+        logging.debug("Entered the values")
         data = request.get_json()
         task_id = data['task_id']
         issue_id = data['issue_id']
+        title = data['title']
         description = data['description']
-        status = data['status']
         task_sd = data['task_sd']
         task_ed = data['task_ed']
-        planned_hours = data['planned_hours']
-        actual_hours = data['actual_hours']
-        priority = str(data['priority'])
-        
-        cursor = mydb.cursor()
-       #query = "UPDATE task SET description = %s,status = %s,task_sd=%s, task_ed=%s, planned_hours=%s, actual_hours=%s, priority=%s WHERE task_id=%s and issue_id=%s"
-        #values = ( description, status, task_sd, task_ed, planned_hours, actual_hours,priority,task_id, issue_id)
-        #cursor.execute(query, values)
-        #mydb.commit()
+        estimated_time = data['estimated_time']
+        priority = data['priority']
+        file_attachment = data['file_attachment']
+        logging.debug("Values Accepted")
 
-        return updatetask(description, status, task_sd, task_ed, planned_hours, actual_hours,priority,task_id, issue_id)
-    
+        cursor = mydb.cursor()
+        query = "SELECT COUNT(*) FROM task WHERE task_id=%s"
+        cursor.execute(query, (task_id,))
+        count = cursor.fetchone()[0]
+
+        if count == 0:
+            return jsonify({"error": "Task not found"}), 400
+
+        
+        
+        return updatetask(title, description, task_sd, task_ed, estimated_time, priority, file_attachment, task_id, issue_id)
 
     except KeyError as e:
         # Handle missing key in the request data
-        logging.error("Missing key in request data: " + str(e))
+        logging.error("Missing key in request data: {}".format(str(e)))
         return jsonify({"error": "Missing key in request data: " + str(e)}), 400
+
 
     except Exception as e:
         # Handle any other unexpected exceptions
-        logging.error("An error occurred: " + str(e))
+        logging.error("An error occurred: ".format(str(e)))
         return jsonify({"error": "An error occurred: " + str(e)}), 500
-    
 
 
-############################ DELETE TASK #################################
-
-def delete_task():
-    try:
-        data = request.get_json()
-        task_id = data['task_id']
-        cursor = mydb.cursor()
-
-
-        # Delete Task from Task table
-        '''query = "DELETE FROM task WHERE task_id = %s"
-        values = (task_id,)
-        cursor.execute(query, values)
-
-        mydb.commit()
-
-        logging.debug("Task deleted: task_id={}".format(task_id))
-        return jsonify({"message": "Task Deleted successfully"}), 200'''
-
-        return deletetask(task_id)
-        
-
-    except KeyError as e:
-        # Handle missing key in the request data
-        logging.error("Missing key in request data: " + str(e))
-        return jsonify({"error": "Missing key in request data: " + str(e)}), 400
-
-    except Exception as e:
-        # Handle any other unexpected exceptions
-        logging.error("An error occurred: " + str(e))
-        return jsonify({"error": "An error occurred: " + str(e)}), 500
-    
 
 ############################ CREATE DEFECT #################################
 
-def createdefect():
+def createDefect():
     try:
+        logging.debug("entered into create defect" )
         data = request.get_json()
         issue_id = data['issue_id']
+        title = data['title']
         description = data['description']
-        status = data['status']
-        severity =data['severity']
+        severity = data['severity']
         defect_sd = data['defect_sd']
         defect_ed = data['defect_ed']
-        planned_hours = data['planned_hours']
-        actual_hours = data['actual_hours']
+        priority = data['priority']
+        estimated_time = data['estimated_time']
+        logging.debug("Values Accepted")
+        
 
-        cursor = mydb.cursor()
-
-        '''query = "INSERT INTO defect (issue_id, description, status, severity, defect_sd, defect_ed, planned_hours, actual_hours) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-        values = (issue_id, description, status,severity, defect_sd, defect_ed, planned_hours, actual_hours)
-        cursor.execute(query, values)
-        mydb.commit()
-
-        return jsonify({"message": "Defect created successfully"}), 200'''
-
-        return createdefect(issue_id, description, status,severity, defect_sd, defect_ed, planned_hours, actual_hours)
+        return createdefects(issue_id, title, description, severity, defect_sd, defect_ed, priority, estimated_time)
 
     except KeyError as e:
         # Handle missing key in the request data
         return jsonify({"error": "Missing key in request data: " + str(e)}), 400
-
-    except Exception as e:
-        # Handle any other unexpected exceptions
-        return jsonify({"error": "An error occurred: " + str(e)}), 500
     
 ############################ UPDATE DEFECT #################################
 
-def updatedefect():
+def updateDefect():
     try:
+        logging.debug('Enter the values')
         data = request.get_json()
         defect_id = data['defect_id']
         issue_id = data['issue_id']
+        title = data['title']
         description = data['description']
-        status = data['status']
-        severity =data['severity']
+        severity = data['severity']
         defect_sd = data['defect_sd']
-        defect_ed = data[ 'defect_ed']
-        planned_hours = data['planned_hours']
-        actual_hours = data['actual_hours']
-        
+        defect_ed = data['defect_ed']
+        priority = data['priority']
+        estimated_time = data['estimated_time']
+        file_attachment = data['file_attachment']
+        logging.debug('Values Accepted')
+
         cursor = mydb.cursor()
-        '''query = "UPDATE defect SET description = %s,status = %s,severity=%s,defect_sd=%s, defect_ed=%s, planned_hours=%s, actual_hours=%s WHERE defect_id=%s and issue_id=%s"
-        values = ( description, status, severity, defect_sd, defect_ed, planned_hours, actual_hours,defect_id, issue_id)
-        cursor.execute(query, values)
-        mydb.commit()
+        query = "SELECT COUNT(*) FROM defect WHERE defect_id=%s"
+        cursor.execute(query, (defect_id,))
+        count = cursor.fetchone()[0]
 
-        logging.debug("Defect updated: defect_id={}".format(defect_id))
-        return jsonify({"message": "Defect updated successfully"}), 200'''
-
-        return updatedefect(description, status, severity, defect_sd, defect_ed, planned_hours, actual_hours,defect_id, issue_id)
+        if count == 0:
+            return jsonify({"error": "Defect not found"}), 400
+        
+        return updatedefects(title, description, severity, defect_sd, defect_ed, priority, estimated_time, file_attachment, defect_id, issue_id)
 
     except KeyError as e:
         # Handle missing key in the request data
         logging.error("Missing key in request data: " + str(e))
         return jsonify({"error": "Missing key in request data: " + str(e)}), 400
 
+    
 
-    except Exception as e:
+############################ CREATE ISSUE MEMBER #################################
+
+
+def createissuemember():
+        try:
+            logging.debug("entered into createissuemember" )
+            data = request.get_json()
+            issue_id = data['issue_id']
+            user_id = data['user_id']
+            project_id =data['project_id']
+            logging.debug("accepted values")
+
+            if not isinstance(issue_id, int):
+                return jsonify({'error': 'Invalid data type for issue_id'}), 400
+            if not isinstance(user_id, int):
+                return jsonify({'error': 'Invalid data type for user_id'}), 400
+            if not isinstance(project_id, int):
+                return jsonify({'error': 'Invalid data type for project_id'}), 400
+ 
+            return issue_member(issue_id, user_id,project_id)
+
+        except KeyError as e:
+        # Handle missing key in the request data
+            logging.error("Missing key in request data: {}".format(str(e)))
+            return jsonify({"error": "Missing key in request data: " + str(e)}), 400
+    
+    
+        except Exception as e:
         # Handle any other unexpected exceptions
-        logging.error("An error occurred: " + str(e))
-        return jsonify({"error": "An error occurred: " + str(e)}), 500
+            logging.error("An error occurred: " + str(e))
+            return jsonify({"error": "An error occurred: " + str(e)}), 500
+    
 
 
-############################ DELETE DEFECT #################################
+############################ UPDATE ISSUE MEMBER #################################
 
-def deletedefect():
+def updateissuemember():
     try:
+        logging.debug("Entered into updateissuemember")
         data = request.get_json()
-        defect_id = data['defect_id']
-        cursor = mydb.cursor()
+        issueMember_id = data['issueMember_id']
+        issue_id = data['issue_id']
+        user_id = data['user_id']
+        project_id =data['project_id']
+        logging.debug("accepted values")
 
+        if type(project_id)==str:
+             return jsonify({"Error": "String value inserted"}), 400
 
-        # Delete Task from Task table
-        '''query = "DELETE FROM defect WHERE defect_id = %s"
-        values = (defect_id,)
-        cursor.execute(query, values)
-
-        mydb.commit()
-
-        logging.debug("Defect deleted: defect_id={}".format(defect_id))
-        return jsonify({"message": "Defect Deleted successfully"}), 200'''
-
-        return deletedefect(defect_id)
-        
+        logging.debug("calling issuemember_update function.")
+        return issuemembers_update(issue_id, user_id, project_id,issueMember_id)
 
     except KeyError as e:
         # Handle missing key in the request data
-        logging.error("Missing key in request data: " + str(e))
+        logging.error("Missing key in request data: {}".format(str(e)))
+        return jsonify({"error": "Missing key in request data: " + str(e)}), 400
+
+
+
+############################ DELETE ISSUE MEMBER #################################
+
+def deleteissuemember():
+    try:
+        logging.debug("entered into deleteissuemember")
+        data = request.get_json()
+        issueMember_id = data['issueMember_id']
+        logging.debug("accepted values")
+        
+        
+        logging.debug("calling issuemembers function.")
+        return issuemembers(issueMember_id)
+
+    except KeyError as e:
+        # Handle missing key in the request data
+        print("Missing key in request data: " + str(e))
         return jsonify({"error": "Missing key in request data: " + str(e)}), 400
 
     except Exception as e:
         # Handle any other unexpected exceptions
-        logging.error("An error occurred: " + str(e))
+        print("An error occurred: " + str(e))
         return jsonify({"error": "An error occurred: " + str(e)}), 500

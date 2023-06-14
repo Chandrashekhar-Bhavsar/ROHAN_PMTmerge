@@ -239,7 +239,7 @@ def display_comment():
 @app.route('/create_issue', methods=['POST'])
 def create_issue():
     # Call the create_issue function from the queries module with the required arguments
-    return createissue()  
+    return createIssue()  
     
 
 ############################ UPDATE ISSUE DETAILS #################################
@@ -248,7 +248,7 @@ def create_issue():
 @app.route('/update_issue', methods=['POST'])
 def update_issue():
     # Call the update_issue function from the queries module with the required arguments
-    return updateissue()  # Pass the necessary arguments
+    return updateIssue()  # Pass the necessary arguments
     
 
 ############################ DELETE ISSUE DETAILS #################################

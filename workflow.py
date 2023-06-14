@@ -57,8 +57,6 @@ def getworkflow():
         for i in out:
             dis={"array_name":i[0],"array":i[1]}
             array_list.append(dis)
-
-
         return jsonify(array_list)
     except Exception as e:
         return jsonify({"error": "bad values"}), 400
@@ -229,3 +227,19 @@ def CreateWorkflow():
         return jsonify({"message": "workflow added successfully"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 400
+    
+    
+def updatedefects(title, description, severity, defect_sd, defect_ed, priority, estimated_time, file_attachment, defect_id, issue_id):
+    try:
+        logging.debug("Inside update defects function")
+        query = "UPDATE Defect SET title=%s, description = %s,severity=%s,defect_sd=%s, defect_ed=%s, priority=%s, estimated_time=%s, file_attachment=%s WHERE defect_id=%s and issue_id=%s"
+        values = (title, description, severity, defect_sd, defect_ed, priority, estimated_time, file_attachment, defect_id, issue_id)
+        cursor.execute(query, values)
+        mydb.commit()
+        logging.debug("Defect updated: defect_id={}, issue_id={},title={}, description={}, severity={} ,defect_sd={}, defect_ed={}, priority={}, estimated_time={}, file_attachment={}".format(title, description, severity, defect_sd, defect_ed, priority, estimated_time, file_attachment, defect_id, issue_id))
+        return jsonify({"message": "Defect updated successfully"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+    
+    
+    
