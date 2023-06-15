@@ -560,12 +560,12 @@ def issues_explore():
         issue_id = data['issue_id']
         cursor = mydb.cursor()
 
-        query_task = """ SELECT * FROM Task WHERE Issue_ID = %s """
+        query_task = """ SELECT * FROM Task t join Issue_Details i on t.issue_id = i.issue_id WHERE Issue_ID = %s """
         values = (issue_id,)
         cursor.execute(query_task, values)
         task_result = cursor.fetchall()
 
-        query_defect = """SELECT * FROM defect WHERE Issue_ID = %s """
+        query_defect = """SELECT * FROM defect d join Issue_Details i on t.issue_id = i.issue_id WHERE Issue_ID = %s """
         values = (issue_id,)
         cursor.execute(query_defect, values)
         defect_result = cursor.fetchall()
