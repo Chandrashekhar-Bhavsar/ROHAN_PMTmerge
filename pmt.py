@@ -565,7 +565,7 @@ def issues_explore():
         cursor.execute(query_task, values)
         task_result = cursor.fetchall()
 
-        query_defect = """SELECT * FROM defect d join Issue_Details i on t.issue_id = i.issue_id WHERE t.Issue_ID = %s """
+        query_defect = """SELECT * FROM defect d join Issue_Details i on d.issue_id = i.issue_id WHERE d.Issue_ID = %s """
         values = (issue_id,)
         cursor.execute(query_defect, values)
         defect_result = cursor.fetchall()
