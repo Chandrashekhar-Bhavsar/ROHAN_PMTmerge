@@ -35,6 +35,8 @@ def ShowEmails():
             return jsonify({"error": "Missing 'project_id' in request data"}), 400
         logging.debug(dt_string + " Accepting values... ")
         project_id=data["project_id"]
+        logging.debug(dt_string + " payload recivied from frontend is... ")
+        print(data)
         if(type(project_id) is not int):
             return jsonify({"error":"project_id must be integer"}),400
         query="Select email_id from Users where user_id not in (select user_id from project_member where project_id = %s);"

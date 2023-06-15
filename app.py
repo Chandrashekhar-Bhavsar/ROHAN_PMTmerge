@@ -181,23 +181,12 @@ def count_tasks():
 
 @app.route('/defects_count', methods=['POST'])
 def count_defects():
-    return get_defect_count()
-   
+    return get_defect_count()     
 
 
-
-
-    
-
-
-        
-
-
-@app.route('/Show_Emails', methods=['GET'])
+@app.route('/Show_Emails', methods=['POST'])
 def Show_Emails():
     return ShowEmails()
-   
-
 
     
 @app.route('/show_user', methods=['GET'])
