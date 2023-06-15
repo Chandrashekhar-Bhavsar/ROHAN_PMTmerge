@@ -45,11 +45,11 @@ def IssueFilterationMonth():
         print(project_id)
         if type(project_id) is not int:
             return jsonify({"Error": "Wrong data type of project id"}), 400
-        query1 = "SELECT count(i.issue_id) FROM project_issue i INNER JOIN Task t ON i.issue_id = t.issue_id WHERE project_id=%s and (t.Task_sd between %s and %s);"
+        query1 = "SELECT count(i.issue_id) FROM project_issue i INNER JOIN Task t ON i.issue_id = t.issue_id WHERE i.project_id=%s and (t.Task_sd between %s and %s);"
         values = (project_id,str(last_month_date.date()),str(current_date.date()))
         cursor.execute(query1, values)
         list1=cursor.fetchall()
-        query2 = "SELECT count(i.issue_id) FROM project_issue i INNER JOIN defect d ON i.issue_id = d.issue_id where project_id=%s and (d.defect_sd between %s and %s);"
+        query2 = "SELECT count(i.issue_id) FROM project_issue i INNER JOIN defect d ON i.issue_id = d.issue_id where i.project_id=%s and (d.defect_sd between %s and %s);"
         values = (project_id,str(last_month_date.date()),str(current_date.date()))
         cursor.execute(query2, values)
         list2=cursor.fetchall()
@@ -92,11 +92,11 @@ def IssueFilterationWeek():
         print(project_id)
         if type(project_id) is not int:
             return jsonify({"Error": "Wrong data type of project id"}), 400
-        query1 = "SELECT count(i.issue_id) FROM project_issue i INNER JOIN Task t ON i.issue_id = t.issue_id WHERE project_id=%s and (t.Task_sd between %s and %s);"
+        query1 = "SELECT count(i.issue_id) FROM project_issue i INNER JOIN Task t ON i.issue_id = t.issue_id WHERE i.project_id=%s and (t.Task_sd between %s and %s);"
         values = (project_id,str(last_week_date.date()),str(current_date.date()))
         cursor.execute(query1, values)
         list1=cursor.fetchall()
-        query2 = "SELECT count(i.issue_id) FROM project_issue i INNER JOIN defect d ON i.issue_id = d.issue_id where project_id=%s and (d.defect_sd between %s and %s);"
+        query2 = "SELECT count(i.issue_id) FROM project_issue i INNER JOIN defect d ON i.issue_id = d.issue_id where i.project_id=%s and (d.defect_sd between %s and %s);"
         values = (project_id,str(last_week_date.date()),str(current_date.date()))
         cursor.execute(query2, values)
         list2=cursor.fetchall()
@@ -139,11 +139,11 @@ def IssueFilterationQuarterly():
         print(project_id)
         if type(project_id) is not int:
             return jsonify({"Error": "Wrong data type of project id"}), 400
-        query1 = "SELECT count(i.issue_id) FROM project_issue i INNER JOIN Task t ON i.issue_id = t.issue_id WHERE project_id=%s and (t.Task_sd between %s and %s);"
+        query1 = "SELECT count(i.issue_id) FROM project_issue i INNER JOIN Task t ON i.issue_id = t.issue_id WHERE i.project_id=%s and (t.Task_sd between %s and %s);"
         values = (project_id,str(last_quarter_date.date()),str(current_date.date()))
         cursor.execute(query1, values)
         list1=cursor.fetchall()
-        query2 = "SELECT count(i.issue_id) FROM project_issue i INNER JOIN defect d ON i.issue_id = d.issue_id where project_id=%s and (d.defect_sd between %s and %s);"
+        query2 = "SELECT count(i.issue_id) FROM project_issue i INNER JOIN defect d ON i.issue_id = d.issue_id where i.project_id=%s and (d.defect_sd between %s and %s);"
         values = (project_id,str(last_quarter_date.date()),str(current_date.date()))
         cursor.execute(query2, values)
         list2=cursor.fetchall()
