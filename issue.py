@@ -17,13 +17,27 @@ logging.basicConfig(level=logging.DEBUG)
 def createIssue():
     try:
         data = request.get_json()
+        logging.debug("Inside the createIssue ")
+        logging.debug("payload recived is ")
+        print(data)
+        project_id = data['project_id']
         issue_name = data['issue_name']
         description = data['description']
         type = data['type']
         status = data['status']
+        query = "INSERT INTO Issue_Details (issue_name, description, type, status) VALUES (%s, %s, %s, %s)"
+        values = (issue_name, description, type, status)
+        cursor.execute(query, values)
+        mydb.commit()
+        logging.debug("data inserted into the issue_detail table ")
+        issue_id = cursor.lastrowid
+        query2 = "INSERT INTO issue_member (issue_id,project_id) VALUES (%s, %s)"
+        values2 = (issue_id,project_id)
+        cursor.execute(query2, values2)
+        mydb.commit()
+        logging.debug("data inserted into the issue_member table ")
+        return jsonify({"message": "Issue Created Successfully", "issue_id": issue_id}), 200
 
-
-        return createissues(issue_name, description, type, status)
 
     except KeyError as e:
         # Handle missing key in the request data
@@ -40,9 +54,6 @@ def updateIssue():
             issue_id = data['issue_id']
             status = data['status']
             logging.debug("Values Accepted")
-
-
-
             cursor = mydb.cursor()
             query = "SELECT COUNT(*) FROM issue_details WHERE issue_id=%s"
             cursor.execute(query, (issue_id,))
@@ -282,4 +293,36 @@ def deleteissuemember():
     except Exception as e:
         # Handle any other unexpected exceptions
         print("An error occurred: " + str(e))
+        return jsonify({"error": "An error occurred: " + str(e)}), 500
+    
+    ## added by rohan 
+    
+def ProjectwiseIssue():
+    try:
+        now = datetime.now()
+        dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
+        logging.debug(dt_string + " User has made a call to ProjectwiseIssue")
+        data = request.get_json()
+        project_id = data['project_id']
+        cursor = mydb.cursor()
+        query = "select * from Issue_Details i join issue_member m on i.issue_id = m.issue_id where project_id=%s"
+        values = (project_id,)
+        cursor.execute(query, values)
+        result = cursor.fetchall()
+        issue_details = []
+        for row in result:
+            issue = {
+                'Issue_Id': row[0],
+                'Issue_name': row[1],
+                'Description': row[2],
+                'Type': row[3],
+                'Status': row[4]
+            }
+            issue_details.append(issue)
+
+        return jsonify(issue_details), 200
+
+    except Exception as e:
+        # Handle any errors that occur during the execution
+        logging.error("An error occurred: {}".format(str(e)))
         return jsonify({"error": "An error occurred: " + str(e)}), 500

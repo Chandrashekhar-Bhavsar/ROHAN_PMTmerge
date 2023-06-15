@@ -499,34 +499,6 @@ def update_project_details(project_name, project_description, planned_sd, planne
 
 
 
-def deleteprojects(project_id):
-
-        logging.debug(" Entered in deleteprojects function")
-
-        check_query = "SELECT * FROM Project_Details WHERE project_id = %s"
-        cursor.execute(check_query, (project_id,))
-        result = cursor.fetchone()
-        if result is None:
-            return jsonify({"error": "Project not found"}), 400
-        
-        
-        project_mem = "DELETE FROM project_member WHERE project_id = %s;"
-        values = (project_id,)
-        cursor.execute(project_mem, values)
-
-        # Delete related records from projectworkflow_connection table
-        projectwf_query = "DELETE FROM workflowconnection WHERE project_id = %s;"
-        values = (project_id,)
-        cursor.execute(projectwf_query, values)
-        
-        # Delete project details from project_details table
-        query = "DELETE FROM Project_Details WHERE project_id = %s;"
-        values = (project_id,)
-        cursor.execute(query, values)
-
-        mydb.commit()
-
-        return jsonify({"message": "Project Deleted successfully"}), 200
 
 
 ############################ CREATE TASK #################################
@@ -860,22 +832,7 @@ def displaycomments(id):
             return jsonify(comments_list),200
 
 
-
-def createissues(issue_name, description, type, status):
-
-        query = "INSERT INTO Issue_Details (issue_name, description, type, status) VALUES (%s, %s, %s, %s)"
-        values = (issue_name, description, type, status)
-        cursor.execute(query, values)
-        mydb.commit()
-
-        issue_id = cursor.lastrowid
-
-        response = {
-            "message": "Issue Created Successfully",
-            "issue_id": issue_id
-        }
-
-        return jsonify({"message": "Issue Created Successfully", "issue_id": issue_id}), 200
+       
 
 
 ########################### UPDATE ISSUE DETAILS #################################

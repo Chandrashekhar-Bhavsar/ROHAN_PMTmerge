@@ -25,21 +25,38 @@ file = open("myfile.txt","w")
                                         # login
 ###############################################################################################################
 
-def getemails():
+def ShowEmails():
     try:
         now = datetime.now()
         dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
-        logging.debug(dt_string + " User has made a call to getemails from a Users")
-        cursor = mydb.cursor()
-        query = "SELECT email_id from Users;"
-        cursor.execute(query, )
-        users = cursor.fetchall()
-        logging.debug(dt_string + " Email Checking Query executed successfully")
-        logging.debug(dt_string + " Query result is ", users)
-        return jsonify({'msg': users}), 200
- 
+        logging.debug(dt_string + " Inside  ShowEmails api....")
+        data = request.get_json()
+        if "project_id" not in data:
+            return jsonify({"error": "Missing 'project_id' in request data"}), 400
+        logging.debug(dt_string + " Accepting values... ")
+        project_id=data["project_id"]
+        if(type(project_id) is not int):
+            return jsonify({"error":"project_id must be integer"}),400
+        query="Select email_id from Users where user_id not in (select user_id from project_member where project_id = %s);"
+        values=(project_id,)
+        cursor.execute(query,values)
+        id=cursor.fetchall()
+        logging.debug(dt_string + " returning a list of email_id that are not associated with project...")
+        return jsonify(id),200
+        
+    except KeyError as e:
+        # Handle missing key in the request data
+        return jsonify({"error":  + str(e)}), 400
+
+    except mysql.connector.Error as err:
+        # Handle MySQL database-related errors
+        print("Database error: " + str(err))
+        return jsonify({"error": "Database error: " + str(err)}), 500
+
     except Exception as e:
-        return jsonify({"error": str(e)}), 400       
+        # Handle any other unexpected exceptions
+        print("An error occurred: " + str(e))
+        return jsonify({"error": "An error occurred: " + str(e)}), 500      
         
 
 def pm_loginn():
@@ -840,3 +857,37 @@ def delete_comment():
         print("An error occurred: " + str(e))
         return jsonify({"error": "An error occurred: " + str(e)}), 500
 
+
+
+def deleteprojects():
+        now = datetime.now()
+        dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
+        logging.debug(dt_string + " Inside deleteprojects....")
+        data = request.get_json()
+        logging.debug(dt_string + ' Accepting issue_id to display issue wise comments.....')
+        logging.debug(" Entered in deleteprojects function")
+        project_id=data["projecrt_id"]
+        check_query = "SELECT * FROM Project_Details WHERE project_id = %s"
+        cursor.execute(check_query, project_id)
+        result = cursor.fetchone()
+        if result is None:
+            return jsonify({"error": "Project not found"}), 400
+        
+        
+        project_mem = "DELETE FROM project_member WHERE project_id = %s;"
+        values = (project_id,)
+        cursor.execute(project_mem, values)
+
+        # Delete related records from projectworkflow_connection table
+        projectwf_query = "DELETE FROM workflowconnection WHERE project_id = %s;"
+        values = (project_id,)
+        cursor.execute(projectwf_query, values)
+        
+        # Delete project details from project_details table
+        query = "DELETE FROM Project_Details WHERE project_id = %s;"
+        values = (project_id,)
+        cursor.execute(query, values)
+
+        mydb.commit()
+
+        return jsonify({"message": "Project Deleted successfully"}), 200

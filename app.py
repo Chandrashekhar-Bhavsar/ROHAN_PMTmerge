@@ -166,9 +166,9 @@ def user_details_project():
 
 
 
-@app.route('/get_issue_detailsss', methods=['POST'])
-def get_issuedetails():
-    return get_issue_details()
+@app.route('/Projectwise_Issue', methods=['POST'])
+def Projectwise_Issue():
+    return ProjectwiseIssue()
 
 
 @app.route('/issue_explore', methods=['POST'])
@@ -195,9 +195,9 @@ def count_defects():
         
 
 
-@app.route('/GetEmails', methods=['GET'])
-def GetEmails():
-    return getemails()
+@app.route('/Show_Emails', methods=['GET'])
+def Show_Emails():
+    return ShowEmails()
    
 
 
