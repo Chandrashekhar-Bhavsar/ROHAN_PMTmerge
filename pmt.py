@@ -611,11 +611,11 @@ def issues_explore():
                     'Priority': defect_row[7],
                     'Estimated_time': defect_row[8],
                     'file_attachment': defect_row[9],
-                    'issue_id':task_row[10],
-                    'issue_name':task_row[11],
-                    'description':task_row[12],
-                    'type':task_row[13],
-                    'status':task_row[14]
+                    'issue_id':defect_row[10],
+                    'issue_name':defect_row[11],
+                    'description':defect_row[12],
+                    'type':defect_row[13],
+                    'status':defect_row[14]
                 }
                     
                 
