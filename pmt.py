@@ -572,6 +572,9 @@ def issues_explore():
 
         if not task_result and not defect_result:
             return jsonify({'error': 'No issue details found for the provided issue_id'}), 400
+        
+        print("task data",task_result)
+        print("defect data",task_result)
 
         issue_details = []
 
@@ -580,27 +583,29 @@ def issues_explore():
                 task = {
                     'Task_ID': task_row[0],
                     'Issue_ID': task_row[1],
-                    'Description': task_row[2],
-                    'Status': task_row[3],
+                    'Title': task_row[2],
+                    'Description': task_row[3],
                     'task_SD': task_row[4],
                     'task_ED': task_row[5],
-                    'Planned_Hours': task_row[6],
-                    'Actual_Hours': task_row[7],
-                    'Priority': task_row[8]
+                    'Estimated_time': task_row[6],
+                    'Priority': task_row[7],
+                    'file_attachment': task_row[8]
                 }
                 issue_details.append(task)
 
         if defect_result:
             for defect_row in defect_result:
                 defect = {
-                    'Defect_ID': defect_row[0],
+                    'defect_ID': defect_row[0],
                     'Issue_ID': defect_row[1],
-                    'Description': defect_row[2],
-                    'Status': defect_row[3],
-                    'defect_SD': defect_row[4],
-                    'defect_ED': defect_row[5],
-                    'Planned_Hours': defect_row[6],
-                    'Actual_Hours': defect_row[7]
+                    'Title': defect_row[2],
+                    'Description': defect_row[3],
+                    'severity': defect_row[4],
+                    'defect_SD': defect_row[5],
+                    'defect_ED': defect_row[6],
+                    'Priority': defect_row[7],
+                    'Estimated_time': defect_row[8],
+                    'file_attachment': defect_row[8]
                 }
                 issue_details.append(defect)
 
