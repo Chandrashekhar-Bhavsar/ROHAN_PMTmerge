@@ -31,11 +31,11 @@ def createIssue():
         mydb.commit()
         logging.debug("data inserted into the issue_detail table ")
         issue_id = cursor.lastrowid
-        query2 = "INSERT INTO issue_member (issue_id,project_id) VALUES (%s, %s)"
+        query2 = "INSERT INTO project_issue (issue_id,project_id) VALUES (%s, %s)"
         values2 = (issue_id,project_id)
         cursor.execute(query2, values2)
         mydb.commit()
-        logging.debug("data inserted into the issue_member table ")
+        logging.debug("data inserted into the project_issue table ")
         return jsonify({"message": "Issue Created Successfully", "issue_id": issue_id}), 200
 
 
@@ -305,7 +305,7 @@ def ProjectwiseIssue():
         data = request.get_json()
         project_id = data['project_id']
         cursor = mydb.cursor()
-        query = "select * from Issue_Details i join issue_member m on i.issue_id = m.issue_id where project_id=%s"
+        query = "select * from Issue_Details i join project_issue m on i.issue_id = m.issue_id where project_id=%s"
         values = (project_id,)
         cursor.execute(query, values)
         result = cursor.fetchall()
@@ -326,3 +326,31 @@ def ProjectwiseIssue():
         # Handle any errors that occur during the execution
         logging.error("An error occurred: {}".format(str(e)))
         return jsonify({"error": "An error occurred: " + str(e)}), 500
+    
+    
+def Assign_Issue():
+    try:
+        now = datetime.now()
+        dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
+        logging.debug(dt_string + " User has made a call to Assign_Issue api")
+        data = request.get_json()
+        email_id = data['email_id']
+        issue_id = data['issue_id']
+        project_id=data['project_id']
+        cursor = mydb.cursor()
+        query1 = "select user_id from Users where email_id=%s"
+        values1 = (email_id,)
+        cursor.execute(query1, values1)
+        userId = cursor.fetchone()[0]
+        print("type of cursor is ",type(userId)," and "," value is ",userId)
+        print("Select query executed succesfully")
+        query2 = "insert into issue_member(issue_id,user_id,project_id) values (%s,%s,%s);"
+        values2 = (issue_id,userId,project_id)
+        cursor.execute(query2, values2)
+        mydb.commit()
+        print("Data is inserted to issue_member table")
+        return jsonify({"msg":"Data is inserted to issue_member table"}), 200
+    except Exception as e:
+        logging.error("An error occurred: {}".format(str(e)))
+        return jsonify({"error": "An error occurred: " + str(e)}), 500
+        

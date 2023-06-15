@@ -17,6 +17,7 @@ import logging
 import datetime
 from datetime import datetime
 import logging
+from status_module import *
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -110,6 +111,7 @@ def IssueByWeek():
 def IssueByQuarterly():
     return IssueFilterationQuarterly()
 
+
 @app.route('/DetailedIssue', methods=['GET'])
 def DetailedIssue():
     return DetailedIssueFilteration()
@@ -147,7 +149,6 @@ def delete_project():
     return deleteprojects()
 
 
-
 @app.route('/add_user', methods=['POST'])
 def add_user():
     return adduser()
@@ -161,9 +162,6 @@ def assign_user():
 @app.route('/userdetails_project', methods=['POST'])
 def user_details_project():
     return get_users_from_project()
-
-
-
 
 
 @app.route('/Projectwise_Issue', methods=['POST'])
@@ -326,6 +324,24 @@ def Create_Workflow():
 @app.route('/DeleteWorkflow', methods=['POST'])
 def DeleteWorkflow():
     return Delete_Workflow()
+
+@app.route('/AssignIssue', methods=['POST'])
+def AssignIssue():
+    return Assign_Issue()
+
+    
+@app.route('/addstatus', methods=['POST'])
+def addstatus():
+    return add_status()
+
+
+@app.route('/status_display', methods=['POST'])
+def status_display():
+    return display_status()
+
+@app.route('/status_update', methods=['POST'])
+def status_update():
+    return update_status()
 
     
 if __name__ == "__main__":

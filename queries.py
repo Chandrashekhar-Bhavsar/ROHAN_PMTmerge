@@ -938,3 +938,76 @@ def issuemembers(issueMember_id):
 
         logging.debug("Issue Member deleted: issueMember_id={}".format(issueMember_id))
         return jsonify({"message": "Issue Member Deleted successfully"}), 200
+
+
+
+######################################################################
+
+
+def updatestatus(id,status):
+            """it updates the status based on id"""
+            now = datetime.now()
+            dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
+            logging.debug(dt_string + " Inside updatestatus function.....")
+            query="select * from project_status where id=%s "
+            values=(id,)
+            cursor.execute(query,values)
+            a=cursor.fetchone()
+            if not a:
+                    return jsonify({"error": "Invalid id"}), 400
+            query = "update project_status set status=%s where id = %s;"
+            values= (status,id)
+            cursor.execute(query,values)
+            mydb.commit()
+            return jsonify({"msg":"status updated sucessfully"}),200
+
+
+#########################################################################################################################
+
+
+def statusadd(id,status):
+        """This endpoint is used to add a comment to a project.
+          It expects the project ID, user ID, and the comment description. 
+          The comment is then stored in the database, and the newly added comment, along with other comments for that project, is returned."""
+        
+        now = datetime.now()
+        dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
+        logging.debug(dt_string + " Inside status add function .....")
+        logging.debug(dt_string +  " Adding status to the id....")
+        query = "select * from project_status where id =%s"
+        values = (id,)
+        cursor.execute(query,values)
+        id_status=cursor.fetchone()
+        if  id_status:
+            return jsonify({"error": "status for this id already present you can't add new status for this id you can update it. "}), 400
+        logging.debug(dt_string + " check one done.")
+        query = "INSERT INTO project_status(id,status) VALUES (%s, %s);"
+        values = (id, status)
+        cursor.execute(query, values)
+        mydb.commit()
+        logging.debug(dt_string + " Status successfully added....")
+        return jsonify({"msg":"status added Successfully"}),200
+
+
+#############################################################################################
+
+
+def displaystatus(id):
+        
+        now = datetime.now()
+        dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
+        logging.debug(dt_string + " Inside displaystatus function.....")
+        logging.debug(dt_string +  " Fetching status related to the project with id ",id)
+        query = "select status from project_status where id = %s"
+        values = (id,)
+        cursor.execute(query, values)
+        id1=cursor.fetchall()
+        print(id1)
+        if(id1 is None):
+                return jsonify({"error":"no status found with this id"}),400
+        logging.debug(dt_string + " displaying status for id  ",id)
+        return jsonify(id1),200
+
+
+
+
