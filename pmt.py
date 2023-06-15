@@ -589,7 +589,12 @@ def issues_explore():
                     'task_ED': task_row[5],
                     'Estimated_time': task_row[6],
                     'Priority': task_row[7],
-                    'file_attachment': task_row[8]
+                    'file_attachment': task_row[8],
+                    'issue_id':task_row[9],
+                    'issue_name':task_row[10],
+                    'description':task_row[11],
+                    'type':task_row[12],
+                    'status':task_row[13],
                 }
                 issue_details.append(task)
 
@@ -605,8 +610,15 @@ def issues_explore():
                     'defect_ED': defect_row[6],
                     'Priority': defect_row[7],
                     'Estimated_time': defect_row[8],
-                    'file_attachment': defect_row[8]
+                    'file_attachment': defect_row[9],
+                    'issue_id':task_row[10],
+                    'issue_name':task_row[11],
+                    'description':task_row[12],
+                    'type':task_row[13],
+                    'status':task_row[14]
                 }
+                    
+                
                 issue_details.append(defect)
 
         return jsonify({'issue_details': issue_details}), 200
