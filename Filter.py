@@ -1,8 +1,6 @@
 from flask import Flask, jsonify, request
 import mysql.connector
 from flask_cors import CORS,cross_origin
-import bcrypt
-from flask_bcrypt import bcrypt
 from connection import *
 from queries import *
 from workflow import *
@@ -47,7 +45,7 @@ def IssueFilterationMonth():
         print(project_id)
         if type(project_id) is not int:
             return jsonify({"Error": "Wrong data type of project id"}), 400
-        query1 = "SELECT count(i.issue_id) FROM issue_member i INNER JOIN task t ON i.issue_id = t.issue_id WHERE project_id=%s and (t.task_sd between %s and %s);"
+        query1 = "SELECT count(i.issue_id) FROM issue_member i INNER JOIN Task t ON i.issue_id = t.issue_id WHERE project_id=%s and (t.Task_sd between %s and %s);"
         values = (project_id,str(last_month_date.date()),str(current_date.date()))
         cursor.execute(query1, values)
         list1=cursor.fetchall()
@@ -55,11 +53,11 @@ def IssueFilterationMonth():
         values = (project_id,str(last_month_date.date()),str(current_date.date()))
         cursor.execute(query2, values)
         list2=cursor.fetchall()
-        task=list1[0]
-        print("task =", task)
+        Task=list1[0]
+        print("Task =", Task)
         defect=list2[0]
         print("defect =", defect)
-        issue=task[0]+defect[0]
+        issue=Task[0]+defect[0]
         print("issue =",issue)
         logging.debug(dt_string+" Query Exectued successfully ")
         logging.debug(dt_string+" issue_Number API is executed successfully")
@@ -94,7 +92,7 @@ def IssueFilterationWeek():
         print(project_id)
         if type(project_id) is not int:
             return jsonify({"Error": "Wrong data type of project id"}), 400
-        query1 = "SELECT count(i.issue_id) FROM issue_member i INNER JOIN task t ON i.issue_id = t.issue_id WHERE project_id=%s and (t.task_sd between %s and %s);"
+        query1 = "SELECT count(i.issue_id) FROM issue_member i INNER JOIN Task t ON i.issue_id = t.issue_id WHERE project_id=%s and (t.Task_sd between %s and %s);"
         values = (project_id,str(last_week_date.date()),str(current_date.date()))
         cursor.execute(query1, values)
         list1=cursor.fetchall()
@@ -102,11 +100,11 @@ def IssueFilterationWeek():
         values = (project_id,str(last_week_date.date()),str(current_date.date()))
         cursor.execute(query2, values)
         list2=cursor.fetchall()
-        task=list1[0]
-        print("task =", task)
+        Task=list1[0]
+        print("Task =", Task)
         defect=list2[0]
         print("defect =", defect)
-        issue=task[0]+defect[0]
+        issue=Task[0]+defect[0]
         print("issue =",issue)
         logging.debug(dt_string+" Query Exectued successfully ")
         logging.debug(dt_string+" issue_Number API is executed successfully")
@@ -141,7 +139,7 @@ def IssueFilterationQuarterly():
         print(project_id)
         if type(project_id) is not int:
             return jsonify({"Error": "Wrong data type of project id"}), 400
-        query1 = "SELECT count(i.issue_id) FROM issue_member i INNER JOIN task t ON i.issue_id = t.issue_id WHERE project_id=%s and (t.task_sd between %s and %s);"
+        query1 = "SELECT count(i.issue_id) FROM issue_member i INNER JOIN Task t ON i.issue_id = t.issue_id WHERE project_id=%s and (t.Task_sd between %s and %s);"
         values = (project_id,str(last_quarter_date.date()),str(current_date.date()))
         cursor.execute(query1, values)
         list1=cursor.fetchall()
@@ -149,11 +147,11 @@ def IssueFilterationQuarterly():
         values = (project_id,str(last_quarter_date.date()),str(current_date.date()))
         cursor.execute(query2, values)
         list2=cursor.fetchall()
-        task=list1[0]
-        print("task =", task)
+        Task=list1[0]
+        print("Task =", Task)
         defect=list2[0]
         print("defect =", defect)
-        issue=task[0]+defect[0]
+        issue=Task[0]+defect[0]
         print("issue =",issue)
         logging.debug(dt_string+" Query Exectued successfully ")
         logging.debug(dt_string+" issue_Number API is executed successfully")
@@ -182,59 +180,59 @@ def DetailedIssueFilteration():
         dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
         logging.debug(dt_string+" User has made a call for Filteration Quarter api")
         logging.debug(dt_string+" Inside the Filteratio api ")
-        query1 = "SELECT i.project_id,count(i.issue_id) FROM issue_member i INNER JOIN task t ON i.issue_id = t.issue_id WHERE t.task_sd between %s and %s group by i.project_id;"
+        query1 = "SELECT i.project_id,count(i.issue_id) FROM issue_member i INNER JOIN Task t ON i.issue_id = t.issue_id WHERE t.Task_sd between %s and %s group by i.project_id;"
         values = (str(last_month_date.date()),str(current_date.date()))
         cursor.execute(query1, values)
-        M_task=cursor.fetchall()
-        query2 = "SELECT i.project_id,count(i.issue_id) FROM issue_member i INNER JOIN defect d ON i.issue_id = d.issue_id where d.defect_sd  between %s and %s group by i.project_id;;"
+        M_Task=cursor.fetchall()
+        query2 = "SELECT i.project_id,count(i.issue_id) FROM issue_member i INNER JOIN defect d ON i.issue_id = d.issue_id where d.defect_sd  between %s and %s group by i.project_id;"
         values = (str(last_month_date.date()),str(current_date.date()))
         cursor.execute(query2, values)
         M_defect=cursor.fetchall()
         result_M_defect = {key: value for key, value in M_defect}
         #print(result_M_defect)
-        result_M_task = {key: value for key, value in M_task}
-        #print(result_M_task)
+        result_M_Task = {key: value for key, value in M_Task}
+        #print(result_M_Task)
         Issue_Month = defaultdict(int)
         for key, value in result_M_defect.items():
             Issue_Month[key] += value
-        for key, value in result_M_task.items():
+        for key, value in result_M_Task.items():
             Issue_Month[key] += value
            # print(dict(Issue_Month))
         print(Issue_Month)
-        query3 = "SELECT i.project_id,count(i.issue_id) FROM issue_member i INNER JOIN task t ON i.issue_id = t.issue_id WHERE t.task_sd between %s and %s group by i.project_id;"
+        query3 = "SELECT i.project_id,count(i.issue_id) FROM issue_member i INNER JOIN Task t ON i.issue_id = t.issue_id WHERE t.Task_sd between %s and %s group by i.project_id;"
         values = (str(last_week_date.date()),str(current_date.date()))
         cursor.execute(query3, values)
-        W_task=cursor.fetchall()
-        query4 = "SELECT i.project_id,count(i.issue_id) FROM issue_member i INNER JOIN defect d ON i.issue_id = d.issue_id where d.defect_sd  between %s and %s group by i.project_id;;"
+        W_Task=cursor.fetchall()
+        query4 = "SELECT i.project_id,count(i.issue_id) FROM issue_member i INNER JOIN defect d ON i.issue_id = d.issue_id where d.defect_sd  between %s and %s group by i.project_id;"
         values = (str(last_week_date.date()),str(current_date.date()))
         cursor.execute(query4, values)
         W_defect=cursor.fetchall()
         result_W_defect = {key: value for key, value in W_defect}
         #print(result_W_defect)
-        result_W_task = {key: value for key, value in W_task}
-        #print(result_W_task)
+        result_W_Task = {key: value for key, value in W_Task}
+        #print(result_W_Task)
         Issue_Week = defaultdict(int)
         for key, value in result_W_defect.items():
             Issue_Week[key] += value
-        for key, value in result_W_task.items():
+        for key, value in result_W_Task.items():
            Issue_Week[key] += value
         print(Issue_Week)
-        query5 = "SELECT i.project_id,count(i.issue_id) FROM issue_member i INNER JOIN task t ON i.issue_id = t.issue_id WHERE t.task_sd between %s and %s group by i.project_id;"
+        query5 = "SELECT i.project_id,count(i.issue_id) FROM issue_member i INNER JOIN Task t ON i.issue_id = t.issue_id WHERE t.Task_sd between %s and %s group by i.project_id;"
         values = (str(last_quarter_date.date()),str(current_date.date()))
         cursor.execute(query5, values)
-        Q_task=cursor.fetchall()
+        Q_Task=cursor.fetchall()
         query5 = "SELECT i.project_id,count(i.issue_id) FROM issue_member i INNER JOIN defect d ON i.issue_id = d.issue_id where d.defect_sd  between %s and %s group by i.project_id;;"
         values = (str(last_quarter_date.date()),str(current_date.date()))
         cursor.execute(query5, values)
         Q_defect=cursor.fetchall()
         result_Q_defect = {key: value for key, value in Q_defect}
         #print(result_W_defect)
-        result_Q_task = {key: value for key, value in Q_task}
-        #print(result_W_task)
+        result_Q_Task = {key: value for key, value in Q_Task}
+        #print(result_W_Task)
         Issue_Quarterly = defaultdict(int)
         for key, value in result_Q_defect.items():
             Issue_Quarterly[key] += value
-        for key, value in result_Q_task.items():
+        for key, value in result_Q_Task.items():
            Issue_Quarterly[key] += value
         print(Issue_Quarterly)
         logging.debug(dt_string+" Query Exectued successfully ")
