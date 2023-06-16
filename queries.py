@@ -1007,4 +1007,19 @@ def displaystatus(id):
 
 
 
-
+def updatecomments(description,comment_id):
+            """it deletes a comment based on comment_id"""
+            now = datetime.now()
+            dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
+            logging.debug(dt_string + " Inside update_comments function.....")
+            query="select * from comments where comment_id=%s "
+            values=(comment_id,)
+            cursor.execute(query,values)
+            a=cursor.fetchone()
+            if not a:
+                    return jsonify({"error": "Invalid comment_id"}), 400
+            query = "update comments set description = %s where comment_id=%s;"
+            values= (description , comment_id,)
+            cursor.execute(query,values)
+            mydb.commit()
+            return jsonify({"msg":"Comment updated sucessfully"}),200

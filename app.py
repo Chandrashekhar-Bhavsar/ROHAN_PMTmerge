@@ -342,9 +342,15 @@ def status_display():
 def status_update():
     return update_status()
 
+
 @app.route('/taskid_updatedesc', methods=['POST'])
 def taskid_updatedesc():
     return update_description_taskid()
+
+
+@app.route('/updatecomment', methods=['POST'])
+def updatecomment():
+    return update_comment()
     
 
 

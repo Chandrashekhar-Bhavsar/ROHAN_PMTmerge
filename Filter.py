@@ -261,7 +261,7 @@ def IssueByDayFilteration():
         print("Last quarter's date:", last_quarter_date.date())
         now = datetime.now()
         dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
-        logging.debug(dt_string+" User has made a call for Filteration Month api")
+        logging.debug(dt_string+" User has made a call for Filteration Day api")
         logging.debug(dt_string+" Inside the Filteratio day api ")
         data = request.get_json()
         logging.debug(dt_string+" payload received from frontend is ")
@@ -274,7 +274,7 @@ def IssueByDayFilteration():
         values = (project_id,str(current_date.date()))
         cursor.execute(query1, values)
         list1=cursor.fetchall()
-        query2 = "SELECT count(i.issue_id) FROM project_issue i INNER JOIN defect d ON i.issue_id = d.issue_id where i.project_id=%s and t.Task_sd=%s;"
+        query2 = "SELECT count(i.issue_id) FROM project_issue i INNER JOIN defect d ON i.issue_id = d.issue_id where i.project_id=%s and d.defect_sd=%s;"
         values = (project_id,str(current_date.date()))
         cursor.execute(query2, values)
         list2=cursor.fetchall()

@@ -944,3 +944,53 @@ def deleteprojects():
             mydb.commit()
 
         return jsonify({"message": "Project Deleted successfully"}), 200
+    
+    
+def update_comment():
+    """
+    API endpoint for updating a comment.
+
+    Returns:
+        If successful, returns the result of the 'delete_comments' function.
+        If any errors occur during execution, returns a JSON response with an error message and an appropriate status code.
+
+    Raises:
+        KeyError: If the required field 'comment_id' is missing in the request data.
+        mysql.connector.Error: If there is an error related to the MySQL database.
+        Exception: If any other unexpected exception occurs.
+
+    Usage:
+        - Send a POST request to the 'delete_comment' endpoint.
+        - The request data must be in JSON format and include the following field:
+            - 'comment_id' (integer): The ID of the comment to be deleted.
+    """
+    try:
+        now = datetime.now()
+        dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
+        logging.debug(dt_string + " Inside update comments api....")
+        data = request.get_json()
+        if "comment_id" not in data:
+            return jsonify({"error": "Missing 'comment_id' in request data"}), 400
+        if "description" not in data:
+            return jsonify({"error": "Missing 'description' in request data"}), 400
+        logging.debug(dt_string + " Accepting values to update ")
+        comment_id=data["comment_id"]
+        description = data["description"]
+        if(type(comment_id) is not int):
+            return jsonify({"error":"comment_id must be integer"}),400
+        logging.debug(dt_string + " Calling updateissuewise_comments function to update the database.....")
+        return updatecomments(description,comment_id)
+        
+    except KeyError as e:
+        # Handle missing key in the request data
+        return jsonify({"error":  + str(e)}), 400
+
+    except mysql.connector.Error as err:
+        # Handle MySQL database-related errors
+        print("Database error: " + str(err))
+        return jsonify({"error": "Database error: " + str(err)}), 500
+
+    except Exception as e:
+        # Handle any other unexpected exceptions
+        print("An error occurred: " + str(e))
+        return jsonify({"error": "An error occurred: " + str(e)}), 500
