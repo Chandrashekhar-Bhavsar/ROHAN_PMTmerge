@@ -115,6 +115,11 @@ def IssueByQuarterly():
 @app.route('/DetailedIssue', methods=['GET'])
 def DetailedIssue():
     return DetailedIssueFilteration()
+
+
+@app.route('/IssueByDay', methods=['POST'])
+def IssueByDay():
+    return IssueByDayFilteration()
     
     
 ############################################################
