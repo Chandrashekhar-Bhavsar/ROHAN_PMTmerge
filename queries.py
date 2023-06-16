@@ -810,9 +810,6 @@ def displaycomments(id):
         values = (id,)
         cursor.execute(query, values)
         id=cursor.fetchall()
-        if not id:
-                return jsonify({"error":"no comments found with this id"}),400
-
         logging.debug(dt_string + " All comments fetched sucessfully...")
         comments_list = []
         for project in id:
@@ -826,7 +823,7 @@ def displaycomments(id):
                 comments_list.append(comments_dict)
 
         if(len(comments_list)==0 ):
-            return jsonify({"error":"no matching results"}),400
+            return jsonify({"error":"no matching results","array ": comments_list }),200
         else:
             logging.debug(dt_string + " Returning all the comments related to issueId ",id)
             return jsonify(comments_list),200
