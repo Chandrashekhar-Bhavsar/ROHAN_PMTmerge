@@ -60,6 +60,41 @@ def ShowEmails():
         print("An error occurred: " + str(e))
         return jsonify({"error": "An error occurred: " + str(e)}), 500      
         
+def ShowEmailsTeams():
+    try:
+        now = datetime.now()
+        dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
+        logging.debug(dt_string + " Inside  ShowEmailsTeams api....")
+        data = request.get_json()
+        if "project_id" not in data:
+            return jsonify({"error": "Missing 'project_id' in request data"}), 400
+        logging.debug(dt_string + " Accepting values... ")
+        project_id=data["project_id"]
+        logging.debug(dt_string + " payload recivied from frontend is... ")
+        print(data)
+        if(type(project_id) is not int):
+            return jsonify({"error":"project_id must be integer"}),400
+        query="Select email_id from Users where user_id in (select user_id from project_member where project_id = %s);"
+        values=(project_id,)
+        cursor.execute(query,values)
+        id=cursor.fetchall()
+        logging.debug(dt_string + " returning a list of email_id that are associated with project...")
+        return jsonify(id),200
+        
+    except KeyError as e:
+        # Handle missing key in the request data
+        return jsonify({"error":  + str(e)}), 400
+
+    except mysql.connector.Error as err:
+        # Handle MySQL database-related errors
+        print("Database error: " + str(err))
+        return jsonify({"error": "Database error: " + str(err)}), 500
+
+    except Exception as e:
+        # Handle any other unexpected exceptions
+        print("An error occurred: " + str(e))
+        return jsonify({"error": "An error occurred: " + str(e)}), 500
+
 
 def pm_loginn():
     try:

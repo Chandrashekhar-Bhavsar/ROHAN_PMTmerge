@@ -341,5 +341,10 @@ def status_update():
 def taskid_updatedesc():
     return update_description_taskid()
     
+@app.route('/Show_Emails_Teams', methods=['POST'])
+def Show_Emails_Teams():
+    return ShowEmailsTeams()
+
+
 if __name__ == "__main__":
     app.run(debug=True,port=5000)
