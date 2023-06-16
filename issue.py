@@ -25,18 +25,25 @@ def createIssue():
         description = data['description']
         type = data['type']
         status = data['status']
-        query = "INSERT INTO Issue_Details (issue_name, description, type, status) VALUES (%s, %s, %s, %s)"
-        values = (issue_name, description, type, status)
-        cursor.execute(query, values)
-        mydb.commit()
-        logging.debug("data inserted into the issue_detail table ")
-        issue_id = cursor.lastrowid
-        query2 = "INSERT INTO project_issue (issue_id,project_id) VALUES (%s, %s)"
-        values2 = (issue_id,project_id)
-        cursor.execute(query2, values2)
-        mydb.commit()
-        logging.debug("data inserted into the project_issue table ")
-        return jsonify({"message": "Issue Created Successfully", "issue_id": issue_id}), 200
+        query3="select * from Project_Details where project_id=%s"
+        values3=(project_id,)
+        cursor.execute(query3, values3)
+        result=cursor.fetchall()
+        if not result:
+            return jsonify({"message": "no project exist "}), 400
+        else:
+            query = "INSERT INTO Issue_Details (issue_name, description, type, status) VALUES (%s, %s, %s, %s)"
+            values = (issue_name, description, type, status)
+            cursor.execute(query, values)
+            mydb.commit()
+            logging.debug("data inserted into the issue_detail table ")
+            issue_id = cursor.lastrowid
+            query2 = "INSERT INTO project_issue (issue_id,project_id) VALUES (%s, %s)"
+            values2 = (issue_id,project_id)
+            cursor.execute(query2, values2)
+            mydb.commit()
+            logging.debug("data inserted into the project_issue table ")
+            return jsonify({"message": "Issue Created Successfully", "issue_id": issue_id}), 200
 
 
     except KeyError as e:
@@ -352,5 +359,43 @@ def Assign_Issue():
         return jsonify({"msg":"Data is inserted to issue_member table"}), 200
     except Exception as e:
         logging.error("An error occurred: {}".format(str(e)))
+        return jsonify({"error": "An error occurred: " + str(e)}), 500
+    
+    
+def update_description_taskid():
+    try:
+        now = datetime.now()
+        dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
+        logging.debug(dt_string + " Inside update_description_taskid....")
+        data = request.get_json()
+        logging.debug(dt_string + ' Accepting task_id to update description.....')
+        if "task_id" not in data:
+            return jsonify({"error": "Missing 'task_id' in request data"}), 400
+        if "description" not in data:
+            return jsonify({"error": "Missing 'description' in request data"}), 400
+        task_id=data["task_id"]
+        description = data["description"]
+        if(type(task_id) is not int):
+            return jsonify({"error":"task_id must be integer"}),400
+        query = "update Task set description = %s where task_id=%s;"
+        values = (description,task_id)
+        cursor.execute(query,values)
+        mydb.commit()
+        logging.debug(dt_string + "Description updated successfully.")
+        return jsonify({"msg" : "Description updated successfully."})
+
+    except KeyError as e:
+        # Handle missing key in the request data
+        #print("Missing key in request data: " + str(e))
+        return jsonify({"error": str(e)}), 400
+
+    except mysql.connector.Error as err:
+        # Handle MySQL database-related errors
+        print("Database error: " + str(err))
+        return jsonify({"error": "Database error: " + str(err)}), 500
+
+    except Exception as e:
+        # Handle any other unexpected exceptions
+        print("An error occurred: " + str(e))
         return jsonify({"error": "An error occurred: " + str(e)}), 500
         
