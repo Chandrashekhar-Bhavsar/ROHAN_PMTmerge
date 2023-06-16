@@ -885,28 +885,27 @@ def deleteprojects():
         data = request.get_json()
         logging.debug(dt_string + ' Accepting issue_id to display issue wise comments.....')
         logging.debug(" Entered in deleteprojects function")
-        project_id=data["projecrt_id"]
+        project_id=data["project_id"]
         check_query = "SELECT * FROM Project_Details WHERE project_id = %s"
         cursor.execute(check_query, project_id)
         result = cursor.fetchone()
         if result is None:
             return jsonify({"error": "Project not found"}), 400
-        
-        
-        project_mem = "DELETE FROM project_member WHERE project_id = %s;"
-        values = (project_id,)
-        cursor.execute(project_mem, values)
+        else:
+            project_mem = "DELETE FROM project_member WHERE project_id = %s;"
+            values = (project_id,)
+            cursor.execute(project_mem, values)
 
         # Delete related records from projectworkflow_connection table
-        projectwf_query = "DELETE FROM workflowconnection WHERE project_id = %s;"
-        values = (project_id,)
-        cursor.execute(projectwf_query, values)
+            projectwf_query = "DELETE FROM workflowconnection WHERE project_id = %s;"
+            values = (project_id,)
+            cursor.execute(projectwf_query, values)
         
         # Delete project details from project_details table
-        query = "DELETE FROM Project_Details WHERE project_id = %s;"
-        values = (project_id,)
-        cursor.execute(query, values)
+            query = "DELETE FROM Project_Details WHERE project_id = %s;"
+            values = (project_id,)
+            cursor.execute(query, values)
 
-        mydb.commit()
+            mydb.commit()
 
         return jsonify({"message": "Project Deleted successfully"}), 200

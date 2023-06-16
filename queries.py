@@ -810,7 +810,7 @@ def displaycomments(id):
         values = (id,)
         cursor.execute(query, values)
         id=cursor.fetchall()
-        if(id is None):
+        if not id:
                 return jsonify({"error":"no comments found with this id"}),400
 
         logging.debug(dt_string + " All comments fetched sucessfully...")
