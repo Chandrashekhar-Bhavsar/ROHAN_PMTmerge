@@ -61,7 +61,7 @@ def IssueFilterationMonth():
         print("issue =",issue)
         logging.debug(dt_string+" Query Exectued successfully ")
         logging.debug(dt_string+" issue_Number API is executed successfully")
-        return jsonify({"Issue":issue,"task":Task,"defect":defect}), 200 
+        return jsonify({"Issue":issue,"task":Task[0],"defect":defect[0]}), 200 
     
     except Exception as e:
         return jsonify({"error": "bad values"}), 400
@@ -108,7 +108,7 @@ def IssueFilterationWeek():
         print("issue =",issue)
         logging.debug(dt_string+" Query Exectued successfully ")
         logging.debug(dt_string+" issue_Number API is executed successfully")
-        return jsonify({"Issue":issue,"task":Task,"defect":defect}), 200 
+        return jsonify({"Issue":issue,"task":Task[0],"defect":defect[0]}), 200 
     
     except Exception as e:
         return jsonify({"error": "bad values"}), 400
@@ -155,7 +155,7 @@ def IssueFilterationQuarterly():
         print("issue =",issue)
         logging.debug(dt_string+" Query Exectued successfully ")
         logging.debug(dt_string+" issue_Number API is executed successfully")
-        return jsonify({"Issue":issue, "task":Task,"defect":defect}), 200 
+        return jsonify({"Issue":issue, "task":Task[0],"defect":defect[0]}), 200 
     
     except Exception as e:
         return jsonify({"error": "bad values"}), 400
