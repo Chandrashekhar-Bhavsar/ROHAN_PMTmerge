@@ -32,7 +32,7 @@ app.config['SECRET_KEY'] = 'your-secret-key'
 
 @app.route('/')
 def home():
-    return '<h1>Welcome Team :To the POC YJB</h1>'
+    return '<h1>Welcome Team :To the Project Management Tool</h1>'
 
 
 ############################################################
