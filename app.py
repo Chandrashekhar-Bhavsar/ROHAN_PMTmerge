@@ -193,6 +193,11 @@ def count_defects():
 def Show_Emails():
     return ShowEmails()
 
+
+@app.route('/Show_Emails_Teams', methods=['POST'])
+def Show_Emails_Teams():
+    return ShowEmailsTeams()
+
     
 @app.route('/show_user', methods=['GET'])
 def show_user():
@@ -341,9 +346,7 @@ def status_update():
 def taskid_updatedesc():
     return update_description_taskid()
     
-@app.route('/Show_Emails_Teams', methods=['POST'])
-def Show_Emails_Teams():
-    return ShowEmailsTeams()
+
 
 
 if __name__ == "__main__":
