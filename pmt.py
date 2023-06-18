@@ -994,3 +994,6 @@ def update_comment():
         # Handle any other unexpected exceptions
         print("An error occurred: " + str(e))
         return jsonify({"error": "An error occurred: " + str(e)}), 500
+    
+    
+    

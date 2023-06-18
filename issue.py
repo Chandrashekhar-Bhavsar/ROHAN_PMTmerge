@@ -399,3 +399,41 @@ def update_description_taskid():
         print("An error occurred: " + str(e))
         return jsonify({"error": "An error occurred: " + str(e)}), 500
         
+        
+        
+def update_description_defect():
+    try:
+        now = datetime.now()
+        dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
+        logging.debug(dt_string + " Inside update_description_defect....")
+        data = request.get_json()
+        logging.debug(dt_string + ' Accepting defect_id to update description.....')
+        if "defect_id" not in data:
+            return jsonify({"error": "Missing 'defect_id' in request data"}), 400
+        if "description" not in data:
+            return jsonify({"error": "Missing 'description' in request data"}), 400
+        defect_id=data["defect_id"]
+        description = data["description"]
+        if(type(defect_id) is not int):
+            return jsonify({"error":"task_id must be integer"}),400
+        query = "update defect set description = %s where defect_id=%s;"
+        values = (description,defect_id)
+        cursor.execute(query,values)
+        mydb.commit()
+        logging.debug(dt_string + "Description updated successfully.")
+        return jsonify({"msg" : "Description updated successfully."})
+
+    except KeyError as e:
+        # Handle missing key in the request data
+        #print("Missing key in request data: " + str(e))
+        return jsonify({"error": str(e)}), 400
+
+    except mysql.connector.Error as err:
+        # Handle MySQL database-related errors
+        print("Database error: " + str(err))
+        return jsonify({"error": "Database error: " + str(err)}), 500
+
+    except Exception as e:
+        # Handle any other unexpected exceptions
+        print("An error occurred: " + str(e))
+        return jsonify({"error": "An error occurred: " + str(e)}), 500

@@ -279,7 +279,6 @@ def create_defect():
 
 @app.route('/update_defect', methods=['POST'])
 def update_defect():
-
     return updateDefect()
 
 ############################ DELETE DEFECT #################################
@@ -346,6 +345,11 @@ def status_update():
 @app.route('/taskid_updatedesc', methods=['POST'])
 def taskid_updatedesc():
     return update_description_taskid()
+
+
+@app.route('/defectid_updatedesc', methods=['POST'])
+def defectid_updatedesc():
+    return update_description_defect()
 
 
 @app.route('/updatecomment', methods=['POST'])
