@@ -62,7 +62,7 @@ def updateIssue():
             status = data['status']
             logging.debug("Values Accepted")
             cursor = mydb.cursor()
-            query = "SELECT COUNT(*) FROM issue_details WHERE issue_id=%s"
+            query = "SELECT COUNT(*) FROM Issue_Details WHERE issue_id=%s"
             cursor.execute(query, (issue_id,))
             count = cursor.fetchone()[0]
 
