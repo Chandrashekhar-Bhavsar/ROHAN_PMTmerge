@@ -462,7 +462,7 @@ def userwiseissue():
                 'Type': row[3],
                 'Status': row[4]
             }
-        issue_details.append(issue)
+                issue_details.append(issue)
         print("result of query is ",issue_details)
         return jsonify({"issue details": issue_details})
         
