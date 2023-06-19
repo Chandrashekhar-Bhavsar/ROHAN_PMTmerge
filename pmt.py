@@ -933,10 +933,6 @@ def deleteprojects():
             values = (project_id,)
             cursor.execute(project_mem, values)
             
-            query ="delete from Issue_Details where issue_id in (select issue_id from project_issue where project_id = %s);"
-            values = (project_id,)
-            cursor.execute(query,values)
-            
             query1 = "delete from comments where issue_id in (select issue_id from project_issue where project_id = %s);"
             values = (project_id,)
             cursor.execute(query1,values)
@@ -969,7 +965,12 @@ def deleteprojects():
             Query = "delete from comments where project_id=%s;"
             values = (project_id,)
             cursor.execute(Query,values)
-        
+            
+            query ="delete from Issue_Details where issue_id in (select issue_id from project_issue where project_id = %s);"
+            values = (project_id,)
+            cursor.execute(query,values)
+            
+            
         # Delete project details from project_details table
             query = "DELETE FROM Project_Details WHERE project_id = %s;"
             values = (project_id,)
