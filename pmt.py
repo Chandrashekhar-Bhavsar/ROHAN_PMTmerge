@@ -921,8 +921,10 @@ def deleteprojects():
         logging.debug(dt_string + ' Accepting issue_id to display issue wise comments.....')
         logging.debug(" Entered in deleteprojects function")
         project_id=data["project_id"]
+        print(project_id)
         check_query = "SELECT * FROM Project_Details WHERE project_id = %s"
-        cursor.execute(check_query, project_id)
+        values=(project_id,)
+        cursor.execute(check_query, values )
         result = cursor.fetchone()
         if result is None:
             return jsonify({"error": "Project not found"}), 400
@@ -930,11 +932,13 @@ def deleteprojects():
             project_mem = "DELETE FROM project_member WHERE project_id = %s;"
             values = (project_id,)
             cursor.execute(project_mem, values)
+            mydb.commit()
 
         # Delete related records from projectworkflow_connection table
             projectwf_query = "DELETE FROM workflowconnection WHERE project_id = %s;"
             values = (project_id,)
             cursor.execute(projectwf_query, values)
+            mydb.commit()
         
         # Delete project details from project_details table
             query = "DELETE FROM Project_Details WHERE project_id = %s;"

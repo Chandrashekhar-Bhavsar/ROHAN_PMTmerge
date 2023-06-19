@@ -459,7 +459,7 @@ def userwiseissue():
             id = id[0][0]
             print("id inside else ", id)
             print("inside else ", id)
-            query2 = "SELECT * FROM issue_details WHERE issue_id = %s;"
+            query2 = "SELECT * FROM Issue_Details WHERE issue_id = %s;"
             values2 = (id,)
             cursor.execute(query2, values2)
             result = cursor.fetchall()
