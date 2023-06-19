@@ -918,27 +918,57 @@ def deleteprojects():
         dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
         logging.debug(dt_string + " Inside deleteprojects....")
         data = request.get_json()
-        logging.debug(dt_string + ' Accepting issue_id to display issue wise comments.....')
+        logging.debug(dt_string + ' Accepting project_id to delete project.....')
         logging.debug(" Entered in deleteprojects function")
         project_id=data["project_id"]
         print(project_id)
         check_query = "SELECT * FROM Project_Details WHERE project_id = %s"
         values=(project_id,)
         cursor.execute(check_query, values )
-        result = cursor.fetchone()
-        if result is None:
-            return jsonify({"error": "Project not found"}), 400
+        result = cursor.fetchall()
+        if not result :
+            return jsonify({"msg": "Project not found"}), 200
         else:
             project_mem = "DELETE FROM project_member WHERE project_id = %s;"
             values = (project_id,)
             cursor.execute(project_mem, values)
-            mydb.commit()
-
+            
+            query ="delete from issue_details where issue_id in (select issue_id from project_issue where project_id = %s);"
+            values = (project_id,)
+            cursor.execute(query,values)
+            
+            query1 = "delete from comments where issue_id in (select issue_id from project_issue where project_id = %s);"
+            values = (project_id,)
+            cursor.execute(query1,values)
+            
+            query1 = "delete from Task where issue_id in (select issue_id from project_issue where project_id = %s);"
+            values = (project_id,)
+            cursor.execute(query1,values)
+            
+            query1 = "delete from defect where issue_id in (select issue_id from project_issue where project_id = %s);"
+            values = (project_id,)
+            cursor.execute(query1,values)
+            
+            query ="delete from project_issue where project_id = %s;"
+            values = (project_id,)
+            cursor.execute(query,values)
+            
+            query ="delete from project_status where id = %s;"
+            values = (project_id,)
+            cursor.execute(query,values)
+            
+            query ="delete from issue_member where project_id = %s;"
+            values = (project_id,)
+            cursor.execute(query,values)
+                        
         # Delete related records from projectworkflow_connection table
             projectwf_query = "DELETE FROM workflowconnection WHERE project_id = %s;"
             values = (project_id,)
             cursor.execute(projectwf_query, values)
-            mydb.commit()
+        # delete project from comments table.
+            Query = "delete from comments where project_id=%s;"
+            values = (project_id,)
+            cursor.execute(Query,values)
         
         # Delete project details from project_details table
             query = "DELETE FROM Project_Details WHERE project_id = %s;"
