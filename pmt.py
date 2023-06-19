@@ -911,7 +911,7 @@ def delete_comment():
         print("An error occurred: " + str(e))
         return jsonify({"error": "An error occurred: " + str(e)}), 500
 
-
+'''
 
 def deleteprojects():
         now = datetime.now()
@@ -944,13 +944,11 @@ def deleteprojects():
             query1 = "delete from defect where issue_id in (select issue_id from project_issue where project_id = %s);"
             values = (project_id,)
             cursor.execute(query1,values)
-            
-            
+        
             
             query ="delete from project_status where id = %s;"
             values = (project_id,)
             cursor.execute(query,values)
-            
             query ="delete from issue_member where project_id = %s;"
             values = (project_id,)
             cursor.execute(query,values)
@@ -981,7 +979,85 @@ def deleteprojects():
 
         return jsonify({"message": "Project Deleted successfully"}), 200
     
+    '''
     
+def deleteprojects():
+    try:
+        now = datetime.now()
+        dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
+        logging.debug(dt_string + " Inside deleteprojects....")
+        data = request.get_json()
+        logging.debug(dt_string + ' Accepting project_id to delete project.....')
+        logging.debug(" Entered in deleteprojects function")
+        project_id=data["project_id"]
+        print(project_id)
+        project_mem = "DELETE FROM project_member WHERE project_id = %s;"
+        values = (project_id,)
+        cursor.execute(project_mem, values)
+        project = "select issue_id from project_issue where project_id=%s"
+        values = (project_id,)
+        cursor.execute(project, values)
+        issue_ids=cursor.fetchall()
+        query ="delete from project_status where id = %s;"
+        values = (project_id,)
+        cursor.execute(query,values)
+        query ="delete from issue_member where project_id = %s;"
+        values = (project_id,)
+        cursor.execute(query,values)
+        print("issue_ids are ",issue_ids)
+        # Delete related records from projectworkflow_connection table
+        projectwf_query = "DELETE FROM workflowconnection WHERE project_id = %s;"
+        values = (project_id,)
+        cursor.execute(projectwf_query, values)
+        # delete project from comments table.
+        Query = "delete from comments where project_id=%s;"
+        values = (project_id,)
+        cursor.execute(Query,values)
+        
+        for i in issue_ids:
+            print (i[0])
+            query1 = "delete from comments where issue_id = %s);"
+            values = (i[0],)
+            cursor.execute(query1,values)
+            
+            query1 = "delete from Task where issue_id  = %s);"
+            values = (i[0],)
+            cursor.execute(query1,values)
+            
+            query1 = "delete from defect where issue_id  = %s);"
+            values = (i[0],)
+            cursor.execute(query1,values)
+            
+            query ="delete from Issue_Details where issue_id= %s);"
+            values = (i[0],)
+            cursor.execute(query,values)
+                
+        query ="delete from project_issue where project_id = %s;"
+        values = (project_id,)
+        cursor.execute(query,values)
+            
+        # Delete project details from project_details table
+        query = "DELETE FROM Project_Details WHERE project_id = %s;"
+        values = (project_id,)
+        cursor.execute(query, values)
+        
+        return jsonify("Done"), 200
+
+
+    except KeyError as e:
+        # Handle missing key in the request data
+        return jsonify({"error":  + str(e)}), 400
+
+    except mysql.connector.Error as err:
+        # Handle MySQL database-related errors
+        print("Database error: " + str(err))
+        return jsonify({"error": "Database error: " + str(err)}), 500
+
+    except Exception as e:
+        # Handle any other unexpected exceptions
+        print("An error occurred: " + str(e))
+        return jsonify({"error": "An error occurred: " + str(e)}), 500
+        
 def update_comment():
     """
     API endpoint for updating a comment.
