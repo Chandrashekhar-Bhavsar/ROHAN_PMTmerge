@@ -1026,7 +1026,7 @@ def deleteprojects():
             values = (i[0],)
             cursor.execute(query1,values)
             
-            query1 = "delete from Task where issue_id  = %s);"
+            query1 = "delete from Task where issue_id  = %s;"
             values = (i[0],)
             cursor.execute(query1,values)
             
