@@ -450,7 +450,7 @@ def userwiseissue():
         user_id=data["user_id"]
         query ="""SELECT pd.Project_ID, pd.Project_Name, pd.Project_Description, pd.Planned_SD, pd.Planned_ED, pd.Actual_SD, pd.Actual_ED, pd.Planned_Hours, pd.Actual_Hours, pd.Status, pd.Project_Lead, pd.Client_Name, pd.Risk, pd.Mitigation, id.issue_id, id.issue_name, id.description, id.type, id.status
 FROM Project_Details pd
-JOIN Issue_Member im ON im.project_id = pd.Project_ID
+JOIN issue_member im ON im.project_id = pd.Project_ID
 JOIN Issue_Details id ON id.issue_id = im.issue_id
 WHERE im.user_id = %s;"""
 

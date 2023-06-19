@@ -149,6 +149,7 @@ def ProjectList():
 def update_project():
     return update_projects() 
 
+
 @app.route('/deleteProject', methods=['POST'])
 def delete_project():
     return deleteprojects()
