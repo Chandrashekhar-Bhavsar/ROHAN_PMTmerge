@@ -437,3 +437,52 @@ def update_description_defect():
         # Handle any other unexpected exceptions
         print("An error occurred: " + str(e))
         return jsonify({"error": "An error occurred: " + str(e)}), 500
+    
+
+        
+        
+def userwiseissue():
+    try:
+        now = datetime.now()
+        dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
+        logging.debug(dt_string + " Inside userwiseissue....")
+        data = request.get_json()
+        user_id=data["user_id"]
+        query = "select issue_id from issue_member where user_id=%s;"
+        values = (user_id,)
+        cursor.execute(query,values)
+        id=cursor.fetchall()
+        print("id is ", id)
+        if not id :
+             return jsonify({"no user found":[]}), 200
+        else:
+            id = id[0][0]
+            print("id inside else ", id)
+            print("inside else ", id)
+            query2 = "SELECT * FROM issue_details WHERE issue_id = %s;"
+            values2 = (id,)
+            cursor.execute(query2, values2)
+            result = cursor.fetchall()
+            issue_details = []
+            for row in result:
+                issue = {
+                'Issue_Id': row[0],
+                'Issue_name': row[1],
+                'Description': row[2],
+                'Type': row[3],
+                'Status': row[4]
+            }
+            issue_details.append(issue)
+            print("result of query is ",issue_details)
+            return jsonify({"issue details": issue_details})
+        
+    except KeyError as e:
+        # Handle missing key in the request data
+        #print("Missing key in request data: " + str(e))
+        return jsonify({"error": str(e)}), 400
+
+        
+    except Exception as e:
+        # Handle any other unexpected exceptions
+        print("An error occurred: " + str(e))
+        return jsonify({"error": "An error occurred: " + str(e)}), 500

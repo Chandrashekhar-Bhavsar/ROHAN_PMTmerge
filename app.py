@@ -355,6 +355,11 @@ def defectid_updatedesc():
 @app.route('/updatecomment', methods=['POST'])
 def updatecomment():
     return update_comment()
+
+
+@app.route('/userwise_issue', methods=['POST'])
+def userwise_issue():
+    return userwiseissue()
     
 
 
