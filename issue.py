@@ -463,7 +463,7 @@ WHERE im.user_id = %s;"""
             issue = {
                 'Project_ID': row[0],
                 'Project_Name': row[1],
-                'issue_id': row[2],
+                'Issue_Id': row[2],
                 'issue_name': row[3],
                 'description': row[4],
                 'type': row[5],
