@@ -464,7 +464,7 @@ def userwiseissue():
             }
                 issue_details.append(issue)
         print("result of query is ",issue_details)
-        return jsonify({"issue details": issue_details})
+        return jsonify(issue_details)
         
     except KeyError as e:
         # Handle missing key in the request data
