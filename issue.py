@@ -448,7 +448,7 @@ def userwiseissue():
         logging.debug(dt_string + " Inside userwiseissue....")
         data = request.get_json()
         user_id=data["user_id"]
-        query ="""SELECT pd.Project_ID, pd.Project_Name, pd.Project_Description, pd.Planned_SD, pd.Planned_ED, pd.Actual_SD, pd.Actual_ED, pd.Planned_Hours, pd.Actual_Hours, pd.Status, pd.Project_Lead, pd.Client_Name, pd.Risk, pd.Mitigation, id.issue_id, id.issue_name, id.description, id.type, id.status
+        query ="""SELECT pd.Project_ID, pd.Project_Name, id.issue_id, id.issue_name, id.description, id.type, id.status
 FROM Project_Details pd
 JOIN issue_member im ON im.project_id = pd.Project_ID
 JOIN Issue_Details id ON id.issue_id = im.issue_id
@@ -458,7 +458,18 @@ WHERE im.user_id = %s;"""
         cursor.execute(query,values)
         result = cursor.fetchall()
         print("id is ", result)
-    
+        issue_details = []
+        for row in result:
+            issue = {
+                'Project_ID': row[0],
+                'Project_Name': row[1],
+                'issue_id': row[2],
+                'issue_name': row[3],
+                'description': row[4],
+                'type': row[5],
+                'status': row[6]
+            }
+            issue_details.append(issue)
         print("result of query is ",result)
         return jsonify(result)
         
