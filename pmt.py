@@ -994,29 +994,35 @@ def deleteprojects():
         project_mem = "DELETE FROM project_member WHERE project_id = %s;"
         values = (project_id,)
         cursor.execute(project_mem, values)
+        logging.debug(dt_string + ' query1 executed .....')
         project = "select issue_id from project_issue where project_id=%s"
         values = (project_id,)
         cursor.execute(project, values)
         issue_ids=cursor.fetchall()
+        logging.debug(dt_string + ' query2 executed .....')
         query ="delete from project_status where id = %s;"
         values = (project_id,)
         cursor.execute(query,values)
+        logging.debug(dt_string + ' query3 executed .....')
         query ="delete from issue_member where project_id = %s;"
         values = (project_id,)
         cursor.execute(query,values)
+        logging.debug(dt_string + ' query4 executed .....')
         print("issue_ids are ",issue_ids)
         # Delete related records from projectworkflow_connection table
         projectwf_query = "DELETE FROM workflowconnection WHERE project_id = %s;"
         values = (project_id,)
         cursor.execute(projectwf_query, values)
+        logging.debug(dt_string + ' query5 executed .....')
         # delete project from comments table.
-        Query = "delete from comments where project_id=%s;"
+        Query = "delete from comments where id=%s;"
         values = (project_id,)
         cursor.execute(Query,values)
+        logging.debug(dt_string + ' query5 executed .....')
         
         for i in issue_ids:
             print (i[0])
-            query1 = "delete from comments where issue_id = %s);"
+            query1 = "delete from comments where id = %s);"
             values = (i[0],)
             cursor.execute(query1,values)
             
@@ -1041,6 +1047,8 @@ def deleteprojects():
         values = (project_id,)
         cursor.execute(query, values)
         
+        
+        mydb.commit()
         return jsonify("Done"), 200
 
 
