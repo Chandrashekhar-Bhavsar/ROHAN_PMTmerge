@@ -1022,7 +1022,7 @@ def deleteprojects():
         
         for i in issue_ids:
             print (i[0])
-            query1 = "delete from comments where id = %s);"
+            query1 = "delete from comments where id = %s;"
             values = (i[0],)
             cursor.execute(query1,values)
             
@@ -1030,11 +1030,11 @@ def deleteprojects():
             values = (i[0],)
             cursor.execute(query1,values)
             
-            query1 = "delete from defect where issue_id  = %s);"
+            query1 = "delete from defect where issue_id  = %s;"
             values = (i[0],)
             cursor.execute(query1,values)
             
-            query ="delete from Issue_Details where issue_id= %s);"
+            query ="delete from Issue_Details where issue_id= %s;"
             values = (i[0],)
             cursor.execute(query,values)
                 
