@@ -471,7 +471,7 @@ WHERE im.user_id = %s;"""
             }
             issue_details.append(issue)
         print("result of query is ",issue_details)
-        return jsonify(result)
+        return jsonify(issue_details)
         
     except KeyError as e:
         # Handle missing key in the request data
