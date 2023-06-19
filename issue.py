@@ -464,10 +464,10 @@ WHERE im.user_id = %s;"""
                 'Project_ID': row[0],
                 'Project_Name': row[1],
                 'Issue_Id': row[2],
-                'issue_name': row[3],
-                'description': row[4],
-                'type': row[5],
-                'status': row[6]
+                'Issue_name': row[3],
+                'Description': row[4],
+                'Type': row[5],
+                'Status': row[6]
             }
             issue_details.append(issue)
         print("result of query is ",issue_details)
