@@ -448,23 +448,13 @@ def userwiseissue():
         logging.debug(dt_string + " Inside userwiseissue....")
         data = request.get_json()
         user_id=data["user_id"]
-        query = "select issue_id from issue_member where user_id=%s;"
+        query = "SELECT * FROM Issue_Details WHERE issue_id in (select issue_id from issue_member where user_id=%s);"
         values = (user_id,)
         cursor.execute(query,values)
-        id=cursor.fetchall()
-        print("id is ", id)
-        if not id :
-             return jsonify({"no user found":[]}), 200
-        else:
-            id = id[0][0]
-            print("id inside else ", id)
-            print("inside else ", id)
-            query2 = "SELECT * FROM Issue_Details WHERE issue_id = %s;"
-            values2 = (id,)
-            cursor.execute(query2, values2)
-            result = cursor.fetchall()
-            issue_details = []
-            for row in result:
+        result = cursor.fetchall()
+        print("id is ", result)
+        issue_details = []
+        for row in result:
                 issue = {
                 'Issue_Id': row[0],
                 'Issue_name': row[1],
@@ -472,9 +462,9 @@ def userwiseissue():
                 'Type': row[3],
                 'Status': row[4]
             }
-            issue_details.append(issue)
-            print("result of query is ",issue_details)
-            return jsonify({"issue details": issue_details})
+        issue_details.append(issue)
+        print("result of query is ",issue_details)
+        return jsonify({"issue details": issue_details})
         
     except KeyError as e:
         # Handle missing key in the request data
