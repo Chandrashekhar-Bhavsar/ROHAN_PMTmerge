@@ -1117,3 +1117,59 @@ def update_comment():
     
     
     
+def Flush():
+    try:
+        now = datetime.now()
+        dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
+        logging.debug(dt_string + " Inside Flush api....")
+
+        query1 = "truncate table defect"
+        cursor.execute(query1, )
+        logging.debug(dt_string + " truncate table defect....")
+        query2 = "truncate table Task"
+        logging.debug(dt_string + " truncate table Task....")
+        cursor.execute(query2, )
+    
+
+        query4 = "truncate table project_member"
+        cursor.execute(query4, )
+        logging.debug(dt_string + " truncate table project_member....")
+        query5 = "truncate table project_status"
+        cursor.execute(query5, ) 
+        logging.debug(dt_string + " truncate table project_status....")      
+        query6 = "truncate table workflowconnection"
+        cursor.execute(query6, )
+        logging.debug(dt_string + " truncate table workflowconnection....")
+        query7 = "truncate table project_issue"
+        cursor.execute(query7, )
+        logging.debug(dt_string + " truncate table project_issue....")
+        query8 = "truncate table workflow"
+        cursor.execute(query8, )
+        logging.debug(dt_string + " truncate table workflow....")
+        query9 = "truncate table issue_member"
+        cursor.execute(query9, )
+        logging.debug(dt_string + " truncate table issue_member....")
+
+        query12 = "truncate table Project_Details"
+        cursor.execute(query12, )
+        logging.debug(dt_string + " truncate table Project_Deatils....")
+ 
+
+        mydb.commit()
+        
+        return jsonify("database is flushed")
+
+        
+    except KeyError as e:
+        # Handle missing key in the request data
+        return jsonify({"error":  + str(e)}), 400
+
+    except mysql.connector.Error as err:
+        # Handle MySQL database-related errors
+        print("Database error: " + str(err))
+        return jsonify({"error": "Database error: " + str(err)}), 500
+
+    except Exception as e:
+        # Handle any other unexpected exceptions
+        print("An error occurred: " + str(e))
+        return jsonify({"error": "An error occurred: " + str(e)}), 500

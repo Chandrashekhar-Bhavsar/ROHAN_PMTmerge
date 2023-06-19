@@ -4,7 +4,6 @@ import jwt
 from functools import wraps
 import mysql.connector
 from flask_cors import CORS,cross_origin
-from flask_bcrypt import bcrypt
 from connection import *
 from queries import *
 from workflow import *
@@ -16,7 +15,6 @@ from UserManagement_module import *
 import logging
 import datetime
 from datetime import datetime
-import logging
 from status_module import *
 
 logging.basicConfig(level=logging.DEBUG)
@@ -361,6 +359,10 @@ def updatecomment():
 @app.route('/userwise_issue', methods=['POST'])
 def userwise_issue():
     return userwiseissue()
+
+@app.route('/flush', methods=['GET'])
+def flush():
+    return Flush()
     
 
 
