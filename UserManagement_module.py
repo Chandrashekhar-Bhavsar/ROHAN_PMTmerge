@@ -61,24 +61,24 @@ def adduser():
         logging.debug(dt_string + " Inside add usder API.....")
         data = request.get_json()
         logging.debug(dt_string + " Taking Some inputs.....")
-        if "name" not in data:
-            return jsonify({"error": "Missing 'name' in request data"}), 400
-        if "email_id" not in data:
-            return jsonify({"error": "Missing 'email_id' in request data"}), 400
-        if "contact" not in data:
-            return jsonify({"error": "Missing 'contact' in request data"}), 400
-        name = data['name']
-        email_id = data['email_id']
-        contact = data['contact']
+        if "Name" not in data:
+            return jsonify({"error": "Missing 'Name' in request data"}), 400
+        if "Email_ID" not in data:
+            return jsonify({"error": "Missing 'Email_ID' in request data"}), 400
+        if "Contact" not in data:
+            return jsonify({"error": "Missing 'Contact' in request data"}), 400
+        Name = data['Name']
+        Email_ID = data['Email_ID']
+        Contact = data['Contact']
         role = "User"
-        if  not is_valid_name(name):
+        if  not is_valid_name(Name):
             return jsonify({"error":"Invalid Name....Name can't start from Number,Can be a alphanumeric,special characters are not allowed"}),400
-        if  not is_valid_email(email_id):
+        if  not is_valid_email(Email_ID):
             return jsonify({"error":"Invalid Email"}),400
-        if  not is_valid_phone_number(contact):
+        if  not is_valid_phone_number(Contact):
             return jsonify({"error":"Invalid Contact Number."}),400
-        query="select 1 from Users where email_id=%s;"
-        values=(email_id,)
+        query="select 1 from Users where Email_ID=%s;"
+        values=(Email_ID,)
         cursor.execute(query,values)
         id=cursor.fetchone()
         if id:
@@ -102,7 +102,7 @@ def adduser():
             logging.debug(dt_string + " OTP generated sucessfully....")
             return otp
         # Example usage
-        email = email_id  # Replace with the recipient's email address
+        email = Email_ID  # Replace with the recipient's email address
         logging.debug(dt_string + " calling generate_otp function...")
         otp = generate_otp()
         logging.debug(dt_string + " calling send_otp_email function....")
@@ -112,7 +112,7 @@ def adduser():
         logging.debug(dt_string + " Encrypting the generated password....")
         hashed_password =hashlib.sha256(str(otp).encode('utf-8')).hexdigest()
         logging.debug(dt_string + " calling User_add function to update the database....")
-        return user_add(name, email_id,hashed_password, contact,role)  #add role 
+        return user_add(Name, Email_ID,hashed_password, Contact,role)  #add role 
     except KeyError as e:
         # Handle missing key in the request data
         #print(dt_string + " Missing key in request data: " + str(e))
@@ -143,25 +143,25 @@ def assignuser():
         
         logging.debug(dt_string + " Accepting some values....")
 
-        if "project_id" not in data:
-            return jsonify({"error": "Missing 'project_id' in request data"}), 400
+        if "Project_ID" not in data:
+            return jsonify({"error": "Missing 'Project_ID' in request data"}), 400
         if "user_ID" not in data:
-            return jsonify({"error": "Missing 'user_id' in request data"}), 400
+            return jsonify({"error": "Missing 'user_ID' in request data"}), 400
         if "role_in_project" not in data:
             return jsonify({"error": "Missing 'role_in_project' in request data"}), 400
         
 
-        project_id=data['project_id']
+        Project_ID=data['Project_ID']
         
         user_ID =data["user_ID"]
         
         role_in_project = data["role_in_project"]
         
 
-        if(type(project_id) is not int):
-            return jsonify({"error":"project_id must be integer"}),400
+        if(type(Project_ID) is not int):
+            return jsonify({"error":"Project_ID must be integer"}),400
         if(type(user_ID) is not int):
-            return jsonify({"error":"user_id must be integer"}),400
+            return jsonify({"error":"user_ID must be integer"}),400
         
 
         logging.debug(dt_string + " checking if the project manager role already existing or not since tere can be only one project manager per project....")
@@ -174,7 +174,7 @@ def assignuser():
             
             logging.debug(dt_string + " calling user_assign function to update the databse....")
             
-            return user_assign(project_id,user_ID,role_in_project)
+            return user_assign(Project_ID,user_ID,role_in_project)
 
     except KeyError as e:
         # Handle missing key in the request data
@@ -244,14 +244,14 @@ def delete_users():
         data = request.get_json()
         
         logging.debug(dt_string + " Accepting some values....")
-        if "user_id" not in data:
-            return jsonify({"error": "Missing 'user_id' in request data"}), 400
-        user_id = data["user_id"]
+        if "user_ID" not in data:
+            return jsonify({"error": "Missing 'user_ID' in request data"}), 400
+        user_ID = data["user_ID"]
         
-        if(type(user_id) is not int):
-            return jsonify({"error":"user_id must be integer"}),400
+        if(type(user_ID) is not int):
+            return jsonify({"error":"user_ID must be integer"}),400
 
-        return user_delete(user_id)
+        return user_delete(user_ID)
     
     except KeyError as e:
         # Handle missing key in the request data
@@ -282,31 +282,31 @@ def user_useridwise():
         logging.debug(dt_string + " Inside update_issuewise_comments api....")
         data = request.get_json()
 
-        if "user_id" not in data:
-            return jsonify({"error": "Missing 'user_id' in request data"}), 400
+        if "user_ID" not in data:
+            return jsonify({"error": "Missing 'user_ID' in request data"}), 400
     
 
         logging.debug(dt_string + " Accepting values to update ")
 
         
-        user_id=data["user_id"]
+        user_ID=data["user_ID"]
      
-        if(type(user_id) is not int):
-            return jsonify({"error":"user_id must be integer"}),400
+        if(type(user_ID) is not int):
+            return jsonify({"error":"user_ID must be integer"}),400
 
-        query="Select name, email_id , contact from Users where user_id = %s;"
-        values=(user_id,)
+        query="Select name, Email_ID , Contact from Users where user_ID = %s;"
+        values=(user_ID,)
         cursor.execute(query,values)
         id=cursor.fetchall()
         user_list = []
         for project in id:
                     user_dict = {
                         'name': project[0],
-                        'Email_id' : project[1],
-                        'contact' : project[2]
+                        'Email_ID' : project[1],
+                        'Contact' : project[2]
                     }
                     user_list.append(user_dict)
-        logging.debug(dt_string + " returning a list of user details for this user_id...")
+        logging.debug(dt_string + " returning a list of user details for this user_ID...")
         return jsonify(user_list),200
         
 

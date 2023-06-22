@@ -19,7 +19,7 @@ class TestUpdateProjectApi(unittest.TestCase):
         # Prepare the data for updating a project
         data = {
              
-        "project_id" :118,
+        "Project_ID" :118,
         "project_name":"trail",
         "project_description":"trail2",
         "planned_sd":"2023-05-26 09:32:29",
@@ -71,7 +71,7 @@ class TestUpdateProjectApi(unittest.TestCase):
         # Prepare the data for updating a project with missing values
         data = {
              
-       "project_id" :118,
+       "Project_ID" :118,
         "project_name":"trail",
         "project_description":"trail2",
         "planned_sd":"2023-05-26 09:32:29",
@@ -120,7 +120,7 @@ class TestUpdateProjectApi(unittest.TestCase):
         # Prepare the data for updating a project with invalid data types
         data = {
             
-       "project_id" :"118",
+       "Project_ID" :"118",
         "project_name":"trail",
         "project_description":"trail2",
         "planned_sd":"2023-05-26 09:32:29",
@@ -172,7 +172,7 @@ class TestUpdateProjectApi(unittest.TestCase):
 
         # Prepare the data for updating a project with values exceeding length limits
         data = {
-            "project_id" :118,
+            "Project_ID" :118,
         "project_name":"trail" * 500, # length is predefined
         "project_description":"trail2"*500,
         "planned_sd":"2023-05-26 09:32:29",
@@ -220,7 +220,7 @@ class TestUpdateProjectApi(unittest.TestCase):
 
         # Prepare the data for updating a project with empty values
         data = {
-                "project_id" :118,
+                "Project_ID" :118,
         
         "project_description":"trail2",
         "planned_sd":"2023-05-26 09:32:29",

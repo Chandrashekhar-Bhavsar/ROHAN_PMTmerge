@@ -160,16 +160,16 @@ def AssignWorkflow():
         logging.debug(dt_string+" Inside the AssignWorkflow module api ")       
         data = request.get_json()
         logging.debug(dt_string+" payload recived from frontend is ",data)
-        project_id = data["project_id"]
+        Project_ID = data["Project_ID"]
         task = data["task"]
         defect = data["defect"]
         cursor = mydb.cursor()
-        query1 = "INSERT INTO workflowconnection (project_id, workflow_name,issue_type) VALUES (%s, %s,%s)"
-        values1 = (project_id, task,"task")
+        query1 = "INSERT INTO workflowconnection (Project_ID, workflow_name,issue_type) VALUES (%s, %s,%s)"
+        values1 = (Project_ID, task,"task")
         cursor.execute(query1, values1)
         mydb.commit()
-        query2 = "INSERT INTO workflowconnection (project_id, workflow_name,issue_type) VALUES (%s, %s,%s)"
-        values2 = (project_id, defect,"defect")
+        query2 = "INSERT INTO workflowconnection (Project_ID, workflow_name,issue_type) VALUES (%s, %s,%s)"
+        values2 = (Project_ID, defect,"defect")
         cursor.execute(query2, values2)
         mydb.commit()
         logging.debug(dt_string+" querry executed successfully" )
@@ -186,10 +186,10 @@ def ProjectwiseWorkflow():
         logging.debug(dt_string+" Inside theProjectwiseWorkflow module api ")       
         data = request.get_json()
         logging.debug(dt_string+" payload recived from frontend is ",data)
-        project_id = data["project_id"]
+        Project_ID = data["Project_ID"]
         cursor = mydb.cursor()
-        query = "select p.issue_type, p.workflow_name, w.workflow from workflowconnection p join workflow w on w.workflow_name=p.workflow_name where p.project_id=%s;"
-        values = (project_id,)
+        query = "select p.issue_type, p.workflow_name, w.workflow from workflowconnection p join workflow w on w.workflow_name=p.workflow_name where p.Project_ID=%s;"
+        values = (Project_ID,)
         cursor.execute(query, values)
         out=cursor.fetchall()
         array_list=[]   
@@ -210,14 +210,14 @@ def CreateWorkflow():
         logging.debug(dt_string+" Inside the CreateWorkflow module api ")       
         data = request.get_json()
         logging.debug(dt_string+" payload recived from frontend is ",data)
-        project_id = data["project_id"]
+        Project_ID = data["Project_ID"]
         type = str(data["type"])
         print(type)
         workflowname=data["wfn"]
         array=str(data["array"])
         cursor = mydb.cursor()
-        query1 = "INSERT INTO workflowconnection (project_id,workflow_name,issue_type) values(%s,%s,%s) ;"
-        values1 = (project_id, workflowname,type)
+        query1 = "INSERT INTO workflowconnection (Project_ID,workflow_name,issue_type) values(%s,%s,%s) ;"
+        values1 = (Project_ID, workflowname,type)
         cursor.execute(query1, values1)
         mydb.commit()
         query2 = "INSERT INTO workflow (workflow_name,workflow) VALUES (%s, %s)"
@@ -238,11 +238,11 @@ def Delete_Workflow():
         logging.debug(dt_string+" Inside the Delete_Workflow module api ")       
         data = request.get_json()
         logging.debug(dt_string+" payload recived from frontend is ",data)
-        project_id = data["project_id"]
+        Project_ID = data["Project_ID"]
         workflow_name = data["workflow_name"]
         cursor = mydb.cursor()
-        query1 = "delete from workflowconnection where Workflow_name=%s and project_id=%s"
-        values1 = (project_id, workflow_name)
+        query1 = "delete from workflowconnection where Workflow_name=%s and Project_ID=%s"
+        values1 = (Project_ID, workflow_name)
         cursor.execute(query1, values1)
         mydb.commit()
         query2 = "delete from workflow where workflow_name= %s"

@@ -4,6 +4,7 @@ import jwt
 from functools import wraps
 import mysql.connector
 from flask_cors import CORS,cross_origin
+from flask_bcrypt import bcrypt
 from connection import *
 from queries import *
 from workflow import *
@@ -94,7 +95,8 @@ def GetWorkflowIssue():
 
 ############################################################
 #                       Issue module                       #
-##################################################issueissue_explore##########
+##################################################issue
+#explore##########
 
 
 @app.route('/IssueByMonth', methods=['POST'])
@@ -226,13 +228,21 @@ def create_issue():
     return createIssue()  
     
 
-############################ UPDATE ISSUE DETAILS #################################
+############################ UPDATE ISSUE STATUS #################################
 
 # Defining an API endpoint (/update_issue) for updating an existing issue. This endpoint expects a POST request.
-@app.route('/update_issue', methods=['POST'])
+@app.route('/update_issue_status', methods=['POST'])
 def update_issue():
     # Call the update_issue function from the queries module with the required arguments
     return updateIssue()  # Pass the necessary arguments
+
+############################ UPDATE ISSUE DESCRIPTION #################################
+
+# Defining an API endpoint (/update_issue) for updating an existing issue. This endpoint expects a POST request.
+@app.route('/update_issue_desc', methods=['POST'])
+def update_issue_desc():
+    # Call the update_issue function from the queries module with the required arguments
+    return updateIssueDesc()  # Pass the necessary arguments
     
 
 ############################ DELETE ISSUE DETAILS #################################
@@ -259,13 +269,6 @@ def update_task():
     # Call the update_task function from the queries module with the required arguments
     return updateTask()  # Pass the necessary arguments
     
-
-############################ DELETE TASK #################################
-
-@app.route('/delete_task', methods=['POST'])
-def delete_task():
-    # Call the delete_task function from the queries module with the required arguments
-    return deletetask()  # Pass the necessary arguments
  
 ############################ CREATE DEFECT#################################
 
@@ -280,11 +283,6 @@ def create_defect():
 def update_defect():
     return updateDefect()
 
-############################ DELETE DEFECT #################################
-
-@app.route('/delete_defect', methods=['POST'])
-def delete_defect():
-    return deletedefect()
 
 @app.route('/completeProjectdetails', methods=['POST'])
 def completeProjectdetails():
@@ -359,13 +357,14 @@ def updatecomment():
 @app.route('/userwise_issue', methods=['POST'])
 def userwise_issue():
     return userwiseissue()
-
-@app.route('/flush', methods=['GET'])
-def flush():
-    return Flush()
     
+@app.route('/issuewise_user', methods=['POST'])
+def issuewise_user():
+    return issuewiseuser()
 
-
+@app.route('/projectidwise_issuestate', methods=['POST'])
+def issuestates_protectwise():
+    return issuestate_projectwise()
 
 if __name__ == "__main__":
     app.run(debug=True,port=5000)

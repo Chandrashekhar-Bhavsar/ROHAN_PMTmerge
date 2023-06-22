@@ -19,7 +19,7 @@ class TestFlask(unittest.TestCase):
         API_ENDPOINT_post = "http://127.0.0.1:5000//assign_user"
 
         # Prepare the data for the new user
-        data = {"project_id":100,
+        data = {"Project_ID":100,
                 "user_ID":2007,
                 "role_in_project":"Team member"}
 
@@ -48,11 +48,11 @@ class TestFlask(unittest.TestCase):
     ####        CASE2       ####
 #############################################
 
-    def test_assign_user_api_for_missing_project_id(self):
+    def test_assign_user_api_for_missing_Project_ID(self):
 
         print("#"*50)
         print("Test case id: TCASU02")
-        print("Test case name: Checking for missing project_id  ")
+        print("Test case name: Checking for missing Project_ID  ")
         print("Inside the Test Case ")
 
         # Define the API endpoint for adding a new user
@@ -87,18 +87,18 @@ class TestFlask(unittest.TestCase):
     ####        CASE3       ####
 #############################################
 
-    def test_assign_user_api_for_missing_user_id(self):
+    def test_assign_user_api_for_missing_user_ID(self):
 
         print("#"*50)
         print("Test case id: TCASU03")
-        print("Test case name: Checking for missing user_id  ")
+        print("Test case name: Checking for missing user_ID  ")
         print("Inside the Test Case ")
 
         # Define the API endpoint for adding a new user
         API_ENDPOINT_post = "http://127.0.0.1:5000//assign_user"
 
         # Prepare the data for the new user
-        data = {"project_id":100,
+        data = {"Project_ID":100,
                 "role_in_project":"Team member"}
 
 
@@ -138,7 +138,7 @@ class TestFlask(unittest.TestCase):
         API_ENDPOINT_post = "http://127.0.0.1:5000//assign_user"
 
         # Prepare the data for the new user
-        data = {"project_id":100,
+        data = {"Project_ID":100,
                 "user_ID":2007}
 
 
@@ -170,14 +170,14 @@ class TestFlask(unittest.TestCase):
 
         print("#"*50)
         print("Test case id: TCASU05")
-        print("Test case name: Checking for incorrect project_id  ")
+        print("Test case name: Checking for incorrect Project_ID  ")
         print("Inside the Test Case ")
 
         # Define the API endpoint for adding a new user
         API_ENDPOINT_post = "http://127.0.0.1:5000//assign_user"
 
        
-        data = {"project_id":"100dvwd",
+        data = {"Project_ID":"100dvwd",
                 "user_ID":2007,
                 "role_in_project":"Team member"}
         
@@ -209,14 +209,14 @@ class TestFlask(unittest.TestCase):
 
         print("#"*50)
         print("Test case id: TCASU06")
-        print("Test case name: Checking for incorrect user_id  ")
+        print("Test case name: Checking for incorrect user_ID  ")
         print("Inside the Test Case ")
 
         # Define the API endpoint for adding a new user
         API_ENDPOINT_post = "http://127.0.0.1:5000//assign_user"
 
         # Prepare the data for the new user
-        data =  {"project_id":100,
+        data =  {"Project_ID":100,
                 "user_ID":"2007vev",
                 "role_in_project":"Team member"}
 
@@ -250,14 +250,14 @@ class TestFlask(unittest.TestCase):
 
         print("#"*50)
         print("Test case id: TCASU07")
-        print("Test case name: Checking for incorrect project_id value  ")
+        print("Test case name: Checking for incorrect Project_ID value  ")
         print("Inside the Test Case ")
 
         # Define the API endpoint for adding a new user
         API_ENDPOINT_post = "http://127.0.0.1:5000//assign_user"
 
         # Prepare the data for the new user
-        data =  {"project_id" : 10000,
+        data =  {"Project_ID" : 10000,
                 "user_ID":2007,
                 "role_in_project":"Team member"}
 
@@ -285,15 +285,15 @@ class TestFlask(unittest.TestCase):
 
         print("#"*50)
         print("Test case id: TCASU08")
-        print("Test case name: Checking for incorrect user_id value  ")
+        print("Test case name: Checking for incorrect user_ID value  ")
         print("Inside the Test Case ")
 
         # Define the API endpoint for adding a new user
         API_ENDPOINT_post = "http://127.0.0.1:5000//assign_user"
 
         # Prepare the data for the new user
-        data =  {"project_id":100,
-                "user_id":20070,
+        data =  {"Project_ID":100,
+                "user_ID":20070,
                 "role_in_project":"Team member"}
 
 

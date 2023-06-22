@@ -20,7 +20,7 @@ class TestFlask(unittest.TestCase):
         API_ENDPOINT_post = "http://127.0.0.1:5000//update_projectwise_comments"
 
         # Prepare the data for the new user
-        data = {"project_id":100,
+        data = {"Project_ID":100,
                 "user_id":2001,
                 "comment_id":21,
                 "description":"comment added by shreya for projectid 100 is to be updated."}
@@ -49,11 +49,11 @@ class TestFlask(unittest.TestCase):
     ####        CASE2       ####
 #############################################
 
-    def test_update_projectwise_comments_api_for_missing_project_id(self):
+    def test_update_projectwise_comments_api_for_missing_Project_ID(self):
 
         print("#"*50)
         print("Test case id: TCUPWC02")
-        print("Test case name: Checking for missing project_id ")
+        print("Test case name: Checking for missing Project_ID ")
         print("Inside the Test Case ")
 
         # Define the API endpoint for adding a new user
@@ -98,7 +98,7 @@ class TestFlask(unittest.TestCase):
         API_ENDPOINT_post = "http://127.0.0.1:5000//update_projectwise_comments"
 
         # Prepare the data for the new user
-        data =  {"project_id":100,
+        data =  {"Project_ID":100,
                 "comment_id":21,
                 "description":"comment added by shreya for projectid 100 is to be updated."}
 
@@ -139,7 +139,7 @@ class TestFlask(unittest.TestCase):
         API_ENDPOINT_post = "http://127.0.0.1:5000//update_projectwise_comments"
 
         # Prepare the data for the new user
-        data =  {"project_id":100,
+        data =  {"Project_ID":100,
                 "user_id":2001,
                 "comment_id":21}
 
@@ -180,7 +180,7 @@ class TestFlask(unittest.TestCase):
         API_ENDPOINT_post = "http://127.0.0.1:5000//update_projectwise_comments"
 
         # Prepare the data for the new user
-        data =  {"project_id":100,
+        data =  {"Project_ID":100,
                 "user_id":2001,
                 "description":"comment added by shreya for projectid 100 is to be updated."}
 
@@ -214,7 +214,7 @@ class TestFlask(unittest.TestCase):
 
         print("#"*50)
         print("Test case id: TCUPWC06")
-        print("Test case name: Checking for incorrect project_id ")
+        print("Test case name: Checking for incorrect Project_ID ")
         print("Inside the Test Case ")
 
 
@@ -222,7 +222,7 @@ class TestFlask(unittest.TestCase):
         API_ENDPOINT_post = "http://127.0.0.1:5000//update_projectwise_comments"
 
         # Prepare the data for the new user
-        data =  {"project_id":"100hy",
+        data =  {"Project_ID":"100hy",
                 "user_id":2001,
                 "comment_id":21,
                 "description":"comment added by shreya for projectid 100 is to be updated."}
@@ -264,7 +264,7 @@ class TestFlask(unittest.TestCase):
         API_ENDPOINT_post = "http://127.0.0.1:5000//update_projectwise_comments"
 
         # Prepare the data for the new user
-        data =  {"project_id":100,
+        data =  {"Project_ID":100,
                 "user_id":"200civg",
                 "comment_id":21,
                 "description":"comment added by shreya for projectid 100 is to be updated."}
@@ -305,7 +305,7 @@ class TestFlask(unittest.TestCase):
         API_ENDPOINT_post = "http://127.0.0.1:5000//update_projectwise_comments"
 
         # Prepare the data for the new user
-        data = {"project_id":100,
+        data = {"Project_ID":100,
                 "user_id":2,
                 "comment_id" : 21,
                 "description":"comment added by shreya for projectid 100"}
@@ -346,7 +346,7 @@ def test_update_projectwise_comments_api_for_incorrect_commentid_data(self):
         API_ENDPOINT_post = "http://127.0.0.1:5000//update_projectwise_comments"
 
         # Prepare the data for the new user
-        data = {"project_id":100,
+        data = {"Project_ID":100,
                 "user_id":2,
                 "comment_id" : 2134565,
                 "description":"comment added by shreya for projectid 100"}

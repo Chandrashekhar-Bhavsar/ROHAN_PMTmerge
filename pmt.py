@@ -31,19 +31,19 @@ def ShowEmails():
         dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
         logging.debug(dt_string + " Inside  ShowEmails api....")
         data = request.get_json()
-        if "project_id" not in data:
-            return jsonify({"error": "Missing 'project_id' in request data"}), 400
+        if "Project_ID" not in data:
+            return jsonify({"error": "Missing 'Project_ID' in request data"}), 400
         logging.debug(dt_string + " Accepting values... ")
-        project_id=data["project_id"]
+        Project_ID=data["Project_ID"]
         logging.debug(dt_string + " payload recivied from frontend is... ")
         print(data)
-        if(type(project_id) is not int):
-            return jsonify({"error":"project_id must be integer"}),400
-        query="Select email_id from Users where user_id not in (select user_id from project_member where project_id = %s);"
-        values=(project_id,)
+        if(type(Project_ID) is not int):
+            return jsonify({"error":"Project_ID must be integer"}),400
+        query="Select Email_ID from Users where user_ID not in (select user_ID from project_member where Project_ID = %s);"
+        values=(Project_ID,)
         cursor.execute(query,values)
         id=cursor.fetchall()
-        logging.debug(dt_string + " returning a list of email_id that are not associated with project...")
+        logging.debug(dt_string + " returning a list of Email_ID that are not associated with project...")
         return jsonify(id),200
         
     except KeyError as e:
@@ -66,19 +66,19 @@ def ShowEmailsTeams():
         dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
         logging.debug(dt_string + " Inside  ShowEmailsTeams api....")
         data = request.get_json()
-        if "project_id" not in data:
-            return jsonify({"error": "Missing 'project_id' in request data"}), 400
+        if "Project_ID" not in data:
+            return jsonify({"error": "Missing 'Project_ID' in request data"}), 400
         logging.debug(dt_string + " Accepting values... ")
-        project_id=data["project_id"]
+        Project_ID=data["Project_ID"]
         logging.debug(dt_string + " payload recivied from frontend is... ")
         print(data)
-        if(type(project_id) is not int):
-            return jsonify({"error":"project_id must be integer"}),400
-        query="Select email_id from Users where user_id in (select user_id from project_member where project_id = %s);"
-        values=(project_id,)
+        if(type(Project_ID) is not int):
+            return jsonify({"error":"Project_ID must be integer"}),400
+        query="Select Email_ID from Users where user_ID in (select user_ID from project_member where Project_ID = %s);"
+        values=(Project_ID,)
         cursor.execute(query,values)
         id=cursor.fetchall()
-        logging.debug(dt_string + " returning a list of email_id that are associated with project...")
+        logging.debug(dt_string + " returning a list of Email_ID that are associated with project...")
         return jsonify(id),200
         
     except KeyError as e:
@@ -103,7 +103,7 @@ def pm_loginn():
         logging.debug(dt_string + " User has made a call for login api")
         logging.debug(dt_string + " Inside the Login api ")
         data = request.get_json()
-        Email_ID = data['email_id']
+        Email_ID = data['Email_ID']
         Password = data['password']
         cursor = mydb.cursor()
         logging.debug(dt_string + " Checking for valid email")
@@ -163,7 +163,7 @@ def create_projects():
         data = request.get_json()
         logging.debug(dt_string+"payload comming from frontend ")
         print(data)
-        User_id=data['user_id']
+        user_ID=data['user_ID']
         project_name = data['project_name']
         project_description = data['project_description']
         planned_sd = data['planned_sd']
@@ -178,7 +178,7 @@ def create_projects():
         risk = data['risk']
         mitigation = data['mitigation']
         logging.debug(dt_string+"Calling create project query function ")
-        return create_project_query(User_id,project_name, project_description, planned_sd, planned_ed, actual_sd, actual_ed,
+        return create_project_query(user_ID,project_name, project_description, planned_sd, planned_ed, actual_sd, actual_ed,
                                     planned_hours, actual_hours, status, project_lead, client_name, risk, mitigation)
 
     except Exception as e:
@@ -188,14 +188,14 @@ def create_projects():
 def Assign_User():
     try:
         data = request.get_json()
-        Email_id = data['email_id']
-        Project_id = data['project_id']
+        Email_ID = data['Email_ID']
+        Project_ID = data['Project_ID']
         now = datetime.now()
         dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
         logging.debug(dt_string + " Inside user_add function.....")
         logging.debug(dt_string + " Adding the users details into the database...")
-        query1 = "select user_ID from Users where email_id=%s;" 
-        values1 = (Email_id,)
+        query1 = "select user_ID from Users where Email_ID=%s;" 
+        values1 = (Email_ID,)
         cursor.execute(query1, values1)
         u_id=cursor.fetchone()
         print(u_id)
@@ -203,7 +203,7 @@ def Assign_User():
             return jsonify({"Error":"No user found"}), 400
         else:
             query2 = "INSERT INTO project_member(user_ID,Project_ID) VALUES (%s, %s);" #add role after test
-            values2 = ( u_id[0],Project_id)#add role after test
+            values2 = ( u_id[0],Project_ID)#add role after test
             cursor.execute(query2, values2)
             mydb.commit()
             logging.debug(dt_string + " Details successfully updated into the database....")
@@ -219,10 +219,10 @@ def get_users_from_project():
         dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
         logging.debug(dt_string + " User has made a call to retrieve users from a project")
         data = request.get_json()
-        project_id = data['project_id']
+        Project_ID = data['Project_ID']
         cursor = mydb.cursor()
         query = "SELECT Users.user_ID, Users.roles, Users.Name, Users.Email_ID FROM Users JOIN project_member ON Users.user_ID = project_member.user_ID WHERE project_member.Project_ID = %s;"
-        values = (project_id,)
+        values = (Project_ID,)
         cursor.execute(query, values)
         users = cursor.fetchall()
 
@@ -232,10 +232,10 @@ def get_users_from_project():
         user_list = []
         for user in users:
             user_info = {
-                'user_id': user[0],
+                'user_ID': user[0],
                 'role': user[1],
-                'name': user[2],
-                'email_id': user[3]
+                'Name': user[2],
+                'Email_ID': user[3]
             }
             user_list.append(user_info)
 
@@ -244,21 +244,23 @@ def get_users_from_project():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 400
+    
+#######################################################
 
 def get_cardprojectdetails():
     try:
         data = request.get_json()
-        User_id = data['user_id']
+        user_ID = data['user_ID']
         print("inside the function")
         cursor = mydb.cursor()
-        query = "SELECT * FROM Project_Details p join project_member m on m.Project_ID=p.Project_ID  where m.user_id=%s;"
-        value=(User_id,)
+        query = "SELECT * FROM Project_Details p join project_member m on m.Project_ID=p.Project_ID  where m.user_ID=%s;"
+        value=(user_ID,)
         cursor.execute(query,value)
         projects = cursor.fetchall()
         project_list = []
         for project in projects:
             project_dict = {
-                    'Project_id': project[0],
+                    'Project_ID': project[0],
                     'Project_name': project[1],
                     'description': project[2],
                     'planned_sd':project[3],
@@ -290,30 +292,30 @@ def update_users():
         
         if "name" not in data:
             return jsonify({"error": "Missing 'name' in request data"}), 400
-        if "email_id" not in data:
-            return jsonify({"error": "Missing 'email_id' in request data"}), 400
-        if "contact" not in data:
-            return jsonify({"error": "Missing 'contact' in request data"}), 400
-        if "user_id" not in data:
-            return jsonify({"error":"Missing 'user_id' in the data."}),400
+        if "Email_ID" not in data:
+            return jsonify({"error": "Missing 'Email_ID' in request data"}), 400
+        if "Contact" not in data:
+            return jsonify({"error": "Missing 'Contact' in request data"}), 400
+        if "user_ID" not in data:
+            return jsonify({"error":"Missing 'user_ID' in the data."}),400
         name = data['name']
         
-        email_id = data['email_id']
+        Email_ID = data['Email_ID']
         
-        contact = data['contact']
+        Contact = data['Contact']
 
-        user_id = data['user_id']
+        user_ID = data['user_ID']
         
-        if(type(user_id) is not int):
-            return jsonify({"error":"user_id must be integer"}),400
+        if(type(user_ID) is not int):
+            return jsonify({"error":"user_ID must be integer"}),400
         if  not is_valid_name(name):
             return jsonify({"error":"Invalid Name....Name can't start from Number,Can be a alphanumeric,special characters are not allowed"}),400
-        if  not is_valid_phone_number(contact):
+        if  not is_valid_phone_number(Contact):
             return jsonify({"error":"Invalid Contact Number."}),400
-        if  not is_valid_email(email_id):
+        if  not is_valid_email(Email_ID):
             return jsonify({"error":"Invalid Email"}),400
 
-        return user_update(user_id,name,email_id,contact)  #add role 
+        return user_update(user_ID,name,Email_ID,Contact)  #add role 
 
     except KeyError as e:
         # Handle missing key in the request data
@@ -348,7 +350,7 @@ def update_projects():
         logging.debug(dt_string,"Inside the update project api ")
         data = request.get_json()
         logging.debug(dt_string,"payload received from frontend is ", data)
-        project_id = data['project_id']
+        Project_ID = data['Project_ID']
         project_name = data['project_name']
         project_description = data['project_description']
         planned_sd = data['planned_sd']
@@ -364,8 +366,8 @@ def update_projects():
         mitigation = "xyz" #data['mitigation']
         logging.debug(dt_string,"Calling update project query function ")
         
-        if not isinstance(project_id, int):
-            return jsonify({'error': 'Invalid data type for project_id'}), 400
+        if not isinstance(Project_ID, int):
+            return jsonify({'error': 'Invalid data type for Project_ID'}), 400
         if not isinstance(planned_hours, str):
             return jsonify({'error': 'Invalid data type for planned_hours'}), 400
         if not isinstance(actual_hours, str):
@@ -373,7 +375,7 @@ def update_projects():
         
         
         return update_project_details(project_name, project_description, planned_sd, planned_ed, actual_sd, actual_ed,
-                                      planned_hours, actual_hours, status, project_lead, client_name, risk, mitigation, project_id)
+                                      planned_hours, actual_hours, status, project_lead, client_name, risk, mitigation, Project_ID)
 
     except KeyError:
         # Handle missing key error
@@ -388,16 +390,16 @@ def update_projects():
 def ProjectDetails():
     try:
         data = request.get_json()
-        pm_id = data['project_id']
+        pm_id = data['Project_ID']
         cursor = mydb.cursor()
-        query = "SELECT * FROM Project_Details where project_id=%s; "
+        query = "SELECT * FROM Project_Details where Project_ID=%s; "
         values=(pm_id,)
         cursor.execute(query,values)
         projects = cursor.fetchall()
         project_list = []
         for project in projects:
             project_dict = {
-                    'Project_id': project[0],
+                    'Project_ID': project[0],
                     'Project_name': project[1],
                     'description': project[2],
                     'planned_sd':project[3],
@@ -437,9 +439,6 @@ def create_task():
         planned_hours = data['planned_hours']
         actual_hours = data['actual_hours']
         priority = data['priority']
-       
-
-       
 
         
         return createtask(issue_id, description, status, task_sd, task_ed, planned_hours, actual_hours,priority)
@@ -519,10 +518,10 @@ def get_users_from_project():
         dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
         logging.debug(dt_string + " User has made a call to retrieve users from a project")
         data = request.get_json()
-        project_id = data['project_id']
+        Project_ID = data['Project_ID']
         cursor = mydb.cursor()
         query = "SELECT Users.user_ID, Users.roles, Users.Name, Users.Email_ID FROM Users JOIN project_member ON Users.user_ID = project_member.user_ID WHERE project_member.Project_ID = %s;"
-        values = (project_id,)
+        values = (Project_ID,)
         cursor.execute(query, values)
         users = cursor.fetchall()
 
@@ -532,10 +531,10 @@ def get_users_from_project():
         user_list = []
         for user in users:
             user_info = {
-                'user_id': user[0],
+                'user_ID': user[0],
                 'role': user[1],
                 'name': user[2],
-                'email_id': user[3]
+                'Email_ID': user[3]
             }
             user_list.append(user_info)
 
@@ -553,30 +552,30 @@ def get_issue_details():
         dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
         logging.debug(dt_string + " User has made a call to retrieve issue_details")
         data = request.get_json()
-        project_id = data['project_id']
+        Project_ID = data['Project_ID']
         cursor = mydb.cursor()
 
         query = """
-        SELECT Issue_Details.Issue_Id, Issue_Details.Issue_name, Issue_Details.Description, Issue_Details.Type, Issue_Details.Status FROM Issue_Details
-        JOIN issue_member ON Issue_Details.Issue_Id = issue_member.issue_ID
-        WHERE issue_member.project_ID = %s
+        SELECT Issue_Details.issue.id, Issue_Details.issue_name, Issue_Details.description, Issue_Details.type, Issue_Details.status FROM Issue_Details
+        JOIN Issue_Member ON Issue_Details.issue_id = Issue_Member.issue_id
+        WHERE Issue_Member.Project_ID = %s
         """
-        values = (project_id,)
+        values = (Project_ID,)
         cursor.execute(query, values)
         result = cursor.fetchall()
 
-        issue_details = []
+        Issue_Details = []
         for row in result:
             issue = {
-                'Issue_Id': row[0],
-                'Issue_name': row[1],
-                'Description': row[2],
-                'Type': row[3],
-                'Status': row[4]
+                'issue_id': row[0],
+                'issue_name': row[1],
+                'description': row[2],
+                'type': row[3],
+                'status': row[4]
             }
-            issue_details.append(issue)
+            Issue_Details.append(issue)
 
-        return jsonify(issue_details), 200
+        return jsonify(Issue_Details), 200
 
     except Exception as e:
         # Handle any errors that occur during the execution
@@ -595,12 +594,12 @@ def issues_explore():
         issue_id = data['issue_id']
         cursor = mydb.cursor()
 
-        query_task = """ SELECT * FROM Task t join Issue_Details i on t.issue_id = i.issue_id WHERE t.Issue_ID = %s """
+        query_task = """ SELECT * FROM Task t join Issue_Details i on t.issue_id = i.issue_id WHERE t.issue_id = %s """
         values = (issue_id,)
         cursor.execute(query_task, values)
         task_result = cursor.fetchall()
 
-        query_defect = """SELECT * FROM defect d join Issue_Details i on d.issue_id = i.issue_id WHERE d.Issue_ID = %s """
+        query_defect = """SELECT * FROM Defect d join Issue_Details i on d.issue_id = i.issue_id WHERE d.issue_id = %s """
         values = (issue_id,)
         cursor.execute(query_defect, values)
         defect_result = cursor.fetchall()
@@ -611,52 +610,56 @@ def issues_explore():
         print("task data",task_result)
         print("defect data",task_result)
 
-        issue_details = []
+        Issue_Details = []
 
         if task_result:
             for task_row in task_result:
                 task = {
-                    'Task_ID': task_row[0],
-                    'Issue_ID': task_row[1],
-                    'Title': task_row[2],
-                    'Description': task_row[3],
-                    'task_SD': task_row[4],
-                    'task_ED': task_row[5],
-                    'Estimated_time': task_row[6],
-                    'Priority': task_row[7],
-                    'file_attachment': task_row[8],
-                    'issue_id':task_row[9],
-                    'issue_name':task_row[10],
-                    'description':task_row[11],
-                    'type':task_row[12],
-                    'status':task_row[13],
+                    'task_id': task_row[0],
+                    'issue_id': task_row[1],
+                    'title': task_row[2],
+                    'task_sd': task_row[3],
+                    'task_ed': task_row[4],
+                    'estimated_time': task_row[5],
+                    'priority': task_row[6],
+                    'file_attachment': task_row[7],
+                    'issue_id':task_row[8],
+                    'issue_name':task_row[9],
+                    'description':task_row[10],
+                    'type':task_row[11],
+                    'status':task_row[12],
                 }
-                issue_details.append(task)
+                Issue_Details.append(task)
 
         if defect_result:
             for defect_row in defect_result:
                 defect = {
-                    'defect_ID': defect_row[0],
-                    'Issue_ID': defect_row[1],
-                    'Title': defect_row[2],
-                    'Description': defect_row[3],
-                    'severity': defect_row[4],
-                    'defect_SD': defect_row[5],
-                    'defect_ED': defect_row[6],
-                    'Priority': defect_row[7],
-                    'Estimated_time': defect_row[8],
-                    'file_attachment': defect_row[9],
-                    'issue_id':defect_row[10],
-                    'issue_name':defect_row[11],
-                    'description':defect_row[12],
-                    'type':defect_row[13],
-                    'status':defect_row[14]
+                    'defect_id': defect_row[0],
+                    'issue_id': defect_row[1],
+                    'title': defect_row[2], 
+                    'product' : defect_row[3],
+                    'component' : defect_row[4],
+                    'component_description' : defect_row[5],
+                    'version' : defect_row[6],
+                    'severity': defect_row[7],
+                    'os' : defect_row[8],
+                    'summary' : defect_row[9],
+                    'defect_sd': defect_row[10],
+                    'defect_ed': defect_row[11],
+                    'priority': defect_row[12],
+                    'estimated_time': defect_row[13],
+                    'file_attachment': defect_row[14],
+                    'issue_id':defect_row[15],
+                    'issue_name':defect_row[16],
+                    'description':defect_row[17],
+                    'type':defect_row[18],
+                    'status':defect_row[19]
                 }
                     
                 
-                issue_details.append(defect)
+                Issue_Details.append(defect)
 
-        return jsonify({'issue_details': issue_details}), 200
+        return jsonify({'issue_details': Issue_Details}), 200
 
     except Exception as e:
         return jsonify({"error": str(e)}), 400
@@ -670,16 +673,16 @@ def get_task_count():
         dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
         logging.debug(dt_string + " User has made a call to retrieve task count")
         data = request.get_json()
-        project_id = data['project_id']
+        Project_ID = data['Project_ID']
         cursor = mydb.cursor()
 
         query = """
-        SELECT COUNT(Task.Task_ID) AS task_count
+        SELECT COUNT(Task.task_id) AS task_count
         FROM Task
-        JOIN issue_member ON Task.Issue_ID = issue_member.issue_ID
-        WHERE issue_member.project_ID = %s
+        JOIN Issue_Member ON Task.issue_id = Issue_Member.issue_id
+        WHERE Issue_Member.Project_ID = %s
         """
-        values = (project_id,)
+        values = (Project_ID,)
         cursor.execute(query, values)
         result = cursor.fetchone()
         task_count = result[0]
@@ -698,16 +701,16 @@ def get_defect_count():
         dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
         logging.debug(dt_string + " User has made a call to retrieve defect count")
         data = request.get_json()
-        project_id = data['project_id']
+        Project_ID = data['Project_ID']
         cursor = mydb.cursor()
 
         query = """
-        SELECT COUNT(defect.defect_ID) AS defect_count
-        FROM defect
-        JOIN issue_member ON defect.Issue_ID = issue_member.issue_ID
-        WHERE issue_member.project_ID = %s
+        SELECT COUNT(Defect.defect_id) AS defect_count
+        FROM Defect
+        JOIN Issue_Member ON Defect.issue_id = Issue_Member.issue_id
+        WHERE Issue_Member.Project_ID = %s
         """
-        values = (project_id,)
+        values = (Project_ID,)
         cursor.execute(query, values)
         result = cursor.fetchone()
         defect_count = result[0]
@@ -733,15 +736,15 @@ def add_comment():
         If any errors occur during execution, returns a JSON response with an error message and an appropriate status code.
 
     Raises:
-        KeyError: If any of the required fields ('project_id', 'user_id', 'description') are missing in the request data.
+        KeyError: If any of the required fields ('Project_ID', 'user_ID', 'description') are missing in the request data.
         mysql.connector.Error: If there is an error related to the MySQL database.
         Exception: If any other unexpected exception occurs.
 
     Usage:
         - Send a POST request to the 'add_projectcomment' endpoint.
         - The request data must be in JSON format and include the following fields:
-            - 'project_id' (integer): The ID of the project to add the comment to.
-            - 'user_id' (integer): The ID of the user adding the comment.
+            - 'Project_ID' (integer): The ID of the project to add the comment to.
+            - 'user_ID' (integer): The ID of the user adding the comment.
             - 'description' (string): The content of the comment to be added.
 """
 
@@ -754,27 +757,27 @@ def add_comment():
         print(data)
         logging.debug(dt_string + " Accepting values for add project comment.....")
 
-        if "id" not in data:
-            return jsonify({"error": "Missing 'project_id' in request data"}), 400
-        if "user_id" not in data:
-            return jsonify({"error": "Missing 'user_id' in request data"}), 400
+        if "ID" not in data:
+            return jsonify({"error": "Missing 'Project_ID' in request data"}), 400
+        if "user_ID" not in data:
+            return jsonify({"error": "Missing 'user_ID' in request data"}), 400
         if "description" not in data:
             return jsonify({"error": "Missing 'description' in request data"}), 400
         
-        id=data['id']
+        ID=data['ID']
         
-        user_id =data["user_id"]
+        user_ID =data["user_ID"]
         
         description=data["description"]
 
-        if(type(user_id) is not int):
-            return jsonify({"error":"user_id must be integer"}),400
-        if(type(id) is not int):
-            return jsonify({"error":"id must be integer"}),400
+        if(type(user_ID) is not int):
+            return jsonify({"error":"user_ID must be integer"}),400
+        if(type(ID) is not int):
+            return jsonify({"error":"ID must be integer"}),400
         
         logging.debug(dt_string + ' calling project_commentadd function.....')
 
-        return commentadd(id,description,user_id)
+        return commentadd(ID,description,user_ID)
 
     except KeyError as e:
         # Handle missing key in the request data
@@ -821,19 +824,19 @@ def display_comments():
         logging.debug(dt_string + " Inside display_issuewise_comments....")
         data = request.get_json()
         logging.debug(dt_string + ' Accepting issue_id to display issue wise comments.....')
-        #project_id= data["project_id"]
+        #Project_ID= data["Project_ID"]
 
-        if "id" not in data:
-            return jsonify({"error": "Missing 'id' in request data"}), 400
-        id=data["id"]
+        if "ID" not in data:
+            return jsonify({"error": "Missing 'ID' in request data"}), 400
+        ID=data["ID"]
        
-        if(type(id) is not int):
-            return jsonify({"error":"id must be integer"}),400
+        if(type(ID) is not int):
+            return jsonify({"error":"ID must be integer"}),400
         
         
         logging.debug(dt_string + " calling displaycomments function......")
 
-        return displaycomments(id)
+        return displaycomments(ID)
 
     except KeyError as e:
         # Handle missing key in the request data
@@ -866,14 +869,14 @@ def delete_comment():
         If any errors occur during execution, returns a JSON response with an error message and an appropriate status code.
 
     Raises:
-        KeyError: If the required field 'comment_id' is missing in the request data.
+        KeyError: If the required field 'comment_ID' is missing in the request data.
         mysql.connector.Error: If there is an error related to the MySQL database.
         Exception: If any other unexpected exception occurs.
 
     Usage:
         - Send a POST request to the 'delete_comment' endpoint.
         - The request data must be in JSON format and include the following field:
-            - 'comment_id' (integer): The ID of the comment to be deleted.
+            - 'comment_ID' (integer): The ID of the comment to be deleted.
     """
     try:
         now = datetime.now()
@@ -881,20 +884,20 @@ def delete_comment():
         logging.debug(dt_string + " Inside update_issuewise_comments api....")
         data = request.get_json()
 
-        if "comment_id" not in data:
-            return jsonify({"error": "Missing 'comment_id' in request data"}), 400
+        if "comment_ID" not in data:
+            return jsonify({"error": "Missing 'comment_ID' in request data"}), 400
     
 
         logging.debug(dt_string + " Accepting values to update ")
 
         
-        comment_id=data["comment_id"]
+        comment_ID=data["comment_ID"]
      
-        if(type(comment_id) is not int):
-            return jsonify({"error":"comment_id must be integer"}),400
+        if(type(comment_ID) is not int):
+            return jsonify({"error":"comment_ID must be integer"}),400
 
         logging.debug(dt_string + " Calling updateissuewise_comments function to update the database.....")
-        return delete_comments(comment_id)
+        return delete_comments(comment_ID)
         
 
     except KeyError as e:
@@ -910,76 +913,6 @@ def delete_comment():
         # Handle any other unexpected exceptions
         print("An error occurred: " + str(e))
         return jsonify({"error": "An error occurred: " + str(e)}), 500
-
-'''
-
-def deleteprojects():
-        now = datetime.now()
-        dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
-        logging.debug(dt_string + " Inside deleteprojects....")
-        data = request.get_json()
-        logging.debug(dt_string + ' Accepting project_id to delete project.....')
-        logging.debug(" Entered in deleteprojects function")
-        project_id=data["project_id"]
-        print(project_id)
-        check_query = "SELECT * FROM Project_Details WHERE project_id = %s"
-        values=(project_id,)
-        cursor.execute(check_query, values )
-        result = cursor.fetchall()
-        if not result :
-            return jsonify({"msg": "Project not found"}), 200
-        else:
-            project_mem = "DELETE FROM project_member WHERE project_id = %s;"
-            values = (project_id,)
-            cursor.execute(project_mem, values)
-            
-            query1 = "delete from comments where issue_id in (select issue_id from project_issue where project_id = %s);"
-            values = (project_id,)
-            cursor.execute(query1,values)
-            
-            query1 = "delete from Task where issue_id in (select issue_id from project_issue where project_id = %s);"
-            values = (project_id,)
-            cursor.execute(query1,values)
-            
-            query1 = "delete from defect where issue_id in (select issue_id from project_issue where project_id = %s);"
-            values = (project_id,)
-            cursor.execute(query1,values)
-        
-            
-            query ="delete from project_status where id = %s;"
-            values = (project_id,)
-            cursor.execute(query,values)
-            query ="delete from issue_member where project_id = %s;"
-            values = (project_id,)
-            cursor.execute(query,values)
-                        
-        # Delete related records from projectworkflow_connection table
-            projectwf_query = "DELETE FROM workflowconnection WHERE project_id = %s;"
-            values = (project_id,)
-            cursor.execute(projectwf_query, values)
-        # delete project from comments table.
-            Query = "delete from comments where project_id=%s;"
-            values = (project_id,)
-            cursor.execute(Query,values)
-            
-            query ="delete from Issue_Details where issue_id in (select issue_id from project_issue where project_id = %s);"
-            values = (project_id,)
-            cursor.execute(query,values)
-            
-            query ="delete from project_issue where project_id = %s;"
-            values = (project_id,)
-            cursor.execute(query,values)
-            
-        # Delete project details from project_details table
-            query = "DELETE FROM Project_Details WHERE project_id = %s;"
-            values = (project_id,)
-            cursor.execute(query, values)
-
-            mydb.commit()
-
-        return jsonify({"message": "Project Deleted successfully"}), 200
-    
-    '''
     
 def deleteprojects():
     try:
@@ -987,42 +920,42 @@ def deleteprojects():
         dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
         logging.debug(dt_string + " Inside deleteprojects....")
         data = request.get_json()
-        logging.debug(dt_string + ' Accepting project_id to delete project.....')
+        logging.debug(dt_string + ' Accepting Project_ID to delete project.....')
         logging.debug(" Entered in deleteprojects function")
-        project_id=data["project_id"]
-        print(project_id)
-        project_mem = "DELETE FROM project_member WHERE project_id = %s;"
-        values = (project_id,)
+        Project_ID=data["Project_ID"]
+        print(Project_ID)
+        project_mem = "DELETE FROM project_member WHERE Project_ID = %s;"
+        values = (Project_ID,)
         cursor.execute(project_mem, values)
         logging.debug(dt_string + ' query1 executed .....')
-        project = "select issue_id from project_issue where project_id=%s"
-        values = (project_id,)
+        project = "select issue_id from project_issue where Project_ID=%s"
+        values = (Project_ID,)
         cursor.execute(project, values)
         issue_ids=cursor.fetchall()
         logging.debug(dt_string + ' query2 executed .....')
-        query ="delete from project_status where id = %s;"
-        values = (project_id,)
+        query ="delete from project_status where ID = %s;"
+        values = (Project_ID,)
         cursor.execute(query,values)
         logging.debug(dt_string + ' query3 executed .....')
-        query ="delete from issue_member where project_id = %s;"
-        values = (project_id,)
+        query ="delete from Issue_Member where Project_ID = %s;"
+        values = (Project_ID,)
         cursor.execute(query,values)
         logging.debug(dt_string + ' query4 executed .....')
         print("issue_ids are ",issue_ids)
         # Delete related records from projectworkflow_connection table
-        projectwf_query = "DELETE FROM workflowconnection WHERE project_id = %s;"
-        values = (project_id,)
+        projectwf_query = "DELETE FROM workflowconnection WHERE Project_ID = %s;"
+        values = (Project_ID,)
         cursor.execute(projectwf_query, values)
         logging.debug(dt_string + ' query5 executed .....')
         # delete project from comments table.
-        Query = "delete from comments where id=%s;"
-        values = (project_id,)
+        Query = "delete from comments where ID=%s;"
+        values = (Project_ID,)
         cursor.execute(Query,values)
         logging.debug(dt_string + ' query5 executed .....')
         
         for i in issue_ids:
             print (i[0])
-            query1 = "delete from comments where id = %s;"
+            query1 = "delete from comments where ID = %s;"
             values = (i[0],)
             cursor.execute(query1,values)
             
@@ -1030,7 +963,7 @@ def deleteprojects():
             values = (i[0],)
             cursor.execute(query1,values)
             
-            query1 = "delete from defect where issue_id  = %s;"
+            query1 = "delete from Defect where issue_id  = %s;"
             values = (i[0],)
             cursor.execute(query1,values)
             
@@ -1038,13 +971,13 @@ def deleteprojects():
             values = (i[0],)
             cursor.execute(query,values)
                 
-        query ="delete from project_issue where project_id = %s;"
-        values = (project_id,)
+        query ="delete from project_issue where Project_ID = %s;"
+        values = (Project_ID,)
         cursor.execute(query,values)
             
         # Delete project details from project_details table
-        query = "DELETE FROM Project_Details WHERE project_id = %s;"
-        values = (project_id,)
+        query = "DELETE FROM Project_Details WHERE Project_ID = %s;"
+        values = (Project_ID,)
         cursor.execute(query, values)
         
         
@@ -1075,31 +1008,31 @@ def update_comment():
         If any errors occur during execution, returns a JSON response with an error message and an appropriate status code.
 
     Raises:
-        KeyError: If the required field 'comment_id' is missing in the request data.
+        KeyError: If the required field 'comment_ID' is missing in the request data.
         mysql.connector.Error: If there is an error related to the MySQL database.
         Exception: If any other unexpected exception occurs.
 
     Usage:
         - Send a POST request to the 'delete_comment' endpoint.
         - The request data must be in JSON format and include the following field:
-            - 'comment_id' (integer): The ID of the comment to be deleted.
+            - 'comment_ID' (integer): The ID of the comment to be deleted.
     """
     try:
         now = datetime.now()
         dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
         logging.debug(dt_string + " Inside update comments api....")
         data = request.get_json()
-        if "comment_id" not in data:
-            return jsonify({"error": "Missing 'comment_id' in request data"}), 400
+        if "comment_ID" not in data:
+            return jsonify({"error": "Missing 'comment_ID' in request data"}), 400
         if "description" not in data:
             return jsonify({"error": "Missing 'description' in request data"}), 400
         logging.debug(dt_string + " Accepting values to update ")
-        comment_id=data["comment_id"]
+        comment_ID=data["comment_ID"]
         description = data["description"]
-        if(type(comment_id) is not int):
-            return jsonify({"error":"comment_id must be integer"}),400
+        if(type(comment_ID) is not int):
+            return jsonify({"error":"comment_ID must be integer"}),400
         logging.debug(dt_string + " Calling updateissuewise_comments function to update the database.....")
-        return updatecomments(description,comment_id)
+        return updatecomments(description,comment_ID)
         
     except KeyError as e:
         # Handle missing key in the request data
@@ -1115,50 +1048,36 @@ def update_comment():
         print("An error occurred: " + str(e))
         return jsonify({"error": "An error occurred: " + str(e)}), 500
     
-    
-    
-def Flush():
+def issuestate_projectwise():
     try:
         now = datetime.now()
         dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
-        logging.debug(dt_string + " Inside Flush api....")
+        logging.debug(dt_string + " Inside issuestate_projectwise api....")
+        data = request.get_json()
+        if "Project_ID" not in data:
+            return jsonify({"error": "Missing 'project_id' in request data"}), 400
+        logging.debug(dt_string + " Accepting values to update ")
+        Project_ID=data["Project_ID"]
+        query = "Select issue_id from project_issue where Project_ID  = %s;"
+        values = (Project_ID,)
+        cursor.execute(query,values)
+        issue_id = cursor.fetchall()
+        if not issue_id:
+            return jsonify({"msg":"No Issues associated with the project."}),200
+        status_list = []
+        for issue in issue_id:
+            issue = issue[0]  # Extract the issue_id from the tuple
+            query1 = "SELECT DISTINCT status FROM issue_details WHERE issue_id = %s;"
+            values1 = (issue,)
+            cursor.execute(query1, values1)
+            status = cursor.fetchall()
+            if status:
+                status_list.extend(status)
+        print(status_list)
+        a=status_list[0][0]
+        b=status_list[1][0]
 
-        query1 = "truncate table defect"
-        cursor.execute(query1, )
-        logging.debug(dt_string + " truncate table defect....")
-        query2 = "truncate table Task"
-        logging.debug(dt_string + " truncate table Task....")
-        cursor.execute(query2, )
-    
-
-        query4 = "truncate table project_member"
-        cursor.execute(query4, )
-        logging.debug(dt_string + " truncate table project_member....")
-        query5 = "truncate table project_status"
-        cursor.execute(query5, ) 
-        logging.debug(dt_string + " truncate table project_status....")      
-        query6 = "truncate table workflowconnection"
-        cursor.execute(query6, )
-        logging.debug(dt_string + " truncate table workflowconnection....")
-        query7 = "truncate table project_issue"
-        cursor.execute(query7, )
-        logging.debug(dt_string + " truncate table project_issue....")
-        query8 = "truncate table workflow"
-        cursor.execute(query8, )
-        logging.debug(dt_string + " truncate table workflow....")
-        query9 = "truncate table issue_member"
-        cursor.execute(query9, )
-        logging.debug(dt_string + " truncate table issue_member....")
-
-        query12 = "truncate table Project_Details"
-        cursor.execute(query12, )
-        logging.debug(dt_string + " truncate table Project_Deatils....")
- 
-
-        mydb.commit()
-        
-        return jsonify("database is flushed")
-
+        return jsonify(a,b), 200
         
     except KeyError as e:
         # Handle missing key in the request data
@@ -1173,3 +1092,6 @@ def Flush():
         # Handle any other unexpected exceptions
         print("An error occurred: " + str(e))
         return jsonify({"error": "An error occurred: " + str(e)}), 500
+    
+    
+    

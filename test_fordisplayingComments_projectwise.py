@@ -21,7 +21,7 @@ class TestFlask(unittest.TestCase):
         API_ENDPOINT_post = "http://127.0.0.1:5000//display_projectwise_comments"
 
         # Prepare the data for the new user
-        data = {"project_id":100}
+        data = {"Project_ID":100}
 
 
         # Set the headers for the request
@@ -90,14 +90,14 @@ class TestFlask(unittest.TestCase):
 
         print("#"*50)
         print("Test case id: TCDCPW03")
-        print("Test case name: Checking for if project_id is string or not  ")
+        print("Test case name: Checking for if Project_ID is string or not  ")
         print("Inside the Test Case ")
 
         # Define the API endpoint for adding a new user
         API_ENDPOINT_post = "http://127.0.0.1:5000//display_projectwise_comments"
 
         # Prepare the data for the new user
-        data = {"project_id":"fsdfn"}
+        data = {"Project_ID":"fsdfn"}
 
 
         # Set the headers for the request
@@ -137,7 +137,7 @@ class TestFlask(unittest.TestCase):
             API_ENDPOINT_post = "http://127.0.0.1:5000//display_projectwise_comments"
 
             # Prepare the data for the new user
-            data = {"project_id":"fsdfn@123"}
+            data = {"Project_ID":"fsdfn@123"}
 
 
             # Set the headers for the request

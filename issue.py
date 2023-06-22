@@ -20,13 +20,13 @@ def createIssue():
         logging.debug("Inside the createIssue ")
         logging.debug("payload recived is ")
         print(data)
-        project_id = data['project_id']
+        Project_ID = data['Project_ID']
         issue_name = data['issue_name']
         description = data['description']
         type = data['type']
         status = data['status']
-        query3="select * from Project_Details where project_id=%s"
-        values3=(project_id,)
+        query3="select * from Project_Details where Project_ID=%s"
+        values3=(Project_ID,)
         cursor.execute(query3, values3)
         result=cursor.fetchall()
         if not result:
@@ -38,8 +38,8 @@ def createIssue():
             mydb.commit()
             logging.debug("data inserted into the issue_detail table ")
             issue_id = cursor.lastrowid
-            query2 = "INSERT INTO project_issue (issue_id,project_id) VALUES (%s, %s)"
-            values2 = (issue_id,project_id)
+            query2 = "INSERT INTO project_issue (issue_id,Project_ID) VALUES (%s, %s)"
+            values2 = (issue_id,Project_ID)
             cursor.execute(query2, values2)
             mydb.commit()
             logging.debug("data inserted into the project_issue table ")
@@ -78,22 +78,97 @@ def updateIssue():
         return jsonify({"error": "Missing key in request data: " + str(e)}), 400
     
 
-############################ DELETE ISSUE DETAILS #################################
+############################ UPDATE ISSUE DESCRIPTION #################################
 
-def deleteIssue():
+def updateIssueDesc():
     try:
-        logging.debug("Entered the values")
-        data = request.get_json()
-        issue_id = data['issue_id']
-        logging.debug("Values Accepted")
+            logging.debug("Entered the values")
+            data = request.get_json()
+            issue_id = data['issue_id']
+            description = data['description']
+            logging.debug("Values Accepted")
+            cursor = mydb.cursor()
+            query = "SELECT COUNT(*) FROM Issue_Details WHERE issue_id=%s"
+            cursor.execute(query, (issue_id,))
+            count = cursor.fetchone()[0]
 
+            if count == 0:
+                return jsonify({"error": "Issue not found"}), 400
+        
+            return updateissuesdesc(description, issue_id)
+   
 
-        return deleteissues(issue_id)
-    
     except KeyError as e:
         # Handle missing key in the request data
         logging.error("Missing key in request data: {}".format(str(e)))
         return jsonify({"error": "Missing key in request data: " + str(e)}), 400
+
+############################ DELETE ISSUE DETAILS #################################
+
+def deleteissue():
+    try:
+        now = datetime.now()
+        dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
+        logging.debug(dt_string + " Inside deleteissues....")
+        data = request.get_json()
+        logging.debug(dt_string + ' Accepting issue_id to delete issue.....')
+        logging.debug(" Entered in deleteissues function")
+        issue_id=data["issue_id"]
+        print(issue_id)
+        project = "select issue_id from Issue_Details where issue_id=%s"
+        values = (issue_id,)
+        cursor.execute(project, values)
+        issue_ids=cursor.fetchall()
+        if not issue_ids:
+            return jsonify({"Message":"No issue found"}), 200
+         
+        logging.debug(dt_string + ' query1 executed .....')     
+        
+        for i in issue_ids:
+            print (i[0])
+            query1 = "delete from comments where ID = %s;"
+            values = (i[0],)
+            cursor.execute(query1,values)
+
+            query2 ="delete from Issue_Member where issue_id = %s;"
+            values = (i[0],)
+            cursor.execute(query2,values)
+            
+            query2 ="delete from project_issue where issue_id = %s;"
+            values = (i[0],)
+            cursor.execute(query2,values)
+                
+
+        t_query = "delete from Task where issue_id = %s;"
+        values = (issue_id,)
+        cursor.execute(t_query,values)
+
+        d_query = "delete from Defect where issue_id = %s;"
+        values = (issue_id,)
+        cursor.execute(d_query,values)
+
+        # Delete issue details from issue_details table
+        query = "DELETE FROM Issue_Details WHERE issue_id = %s;"
+        values = (issue_id,)
+        cursor.execute(query, values)
+        
+        mydb.commit()
+        return jsonify("Done"), 200
+
+
+    except KeyError as e:
+        # Handle missing key in the request data
+        return jsonify({"error":  + str(e)}), 400
+
+    except mysql.connector.Error as err:
+        # Handle MySQL database-related errors
+        print("Database error: " + str(err))
+        return jsonify({"error": "Database error: " + str(err)}), 500
+
+    except Exception as e:
+        # Handle any other unexpected exceptions
+        print("An error occurred: " + str(e))
+        return jsonify({"error": "An error occurred: " + str(e)}), 500
     
 
 
@@ -105,18 +180,18 @@ def createTask():
         data = request.get_json()
         issue_id = data['issue_id']
         title = data['title']
-        description = data['description']
         task_sd = data['task_sd']
         task_ed = data['task_ed']
         estimated_time = data['estimated_time']
         priority = data['priority']
         logging.debug("Values Accepted")
 
-        return createtask(issue_id, title, description, task_sd, task_ed, estimated_time, priority)
+        return createtask(issue_id, title, task_sd, task_ed, estimated_time, priority)
+    
 
     except KeyError as e:
         # Handle missing key in the request data
-        logging.error("Missing key in request data: {}".format(str(e)))
+        print("Missing key in request data: " + str(e))
         return jsonify({"error": "Missing key in request data: " + str(e)}), 400
 
 
@@ -124,18 +199,17 @@ def createTask():
 
 def updateTask():
     try:
-        logging.debug("Entered the values")
+        logging.debug("Enter the values")
         data = request.get_json()
         task_id = data['task_id']
         issue_id = data['issue_id']
         title = data['title']
-        description = data['description']
         task_sd = data['task_sd']
         task_ed = data['task_ed']
         estimated_time = data['estimated_time']
         priority = data['priority']
         file_attachment = data['file_attachment']
-        logging.debug("Values Accepted")
+        logging.debug("values Accepted")
 
         cursor = mydb.cursor()
         query = "SELECT COUNT(*) FROM Task WHERE task_id=%s"
@@ -144,10 +218,9 @@ def updateTask():
 
         if count == 0:
             return jsonify({"error": "Task not found"}), 400
-
         
         
-        return updatetask(title, description, task_sd, task_ed, estimated_time, priority, file_attachment, task_id, issue_id)
+        return updatetask(title, task_sd, task_ed, estimated_time, priority, file_attachment, task_id, issue_id)
 
     except KeyError as e:
         # Handle missing key in the request data
@@ -166,20 +239,28 @@ def updateTask():
 
 def createDefect():
     try:
-        logging.debug("entered into create defect" )
-        data = request.get_json()
+        logging.debug('Enter the values')
+        # Retrieve data from the request
+        data = request.json
+
+        # Extract values from the request data
         issue_id = data['issue_id']
         title = data['title']
-        description = data['description']
+        product = data['product']
+        component = data['component']
+        component_description = data['component_description']
+        version = data['version']
         severity = data['severity']
+        os = data['os']
+        summary = data['summary']
         defect_sd = data['defect_sd']
         defect_ed = data['defect_ed']
         priority = data['priority']
         estimated_time = data['estimated_time']
-        logging.debug("Values Accepted")
+        logging.debug('Values Accepted')
         
 
-        return createdefects(issue_id, title, description, severity, defect_sd, defect_ed, priority, estimated_time)
+        return createdefects(issue_id, title, product, component, component_description, version,severity, os, summary, defect_sd, defect_ed, priority,estimated_time)
 
     except KeyError as e:
         # Handle missing key in the request data
@@ -189,19 +270,22 @@ def createDefect():
 
 def updateDefect():
     try:
-        logging.debug('Enter the values')
-        data = request.get_json()
+        data = request.json
         defect_id = data['defect_id']
         issue_id = data['issue_id']
         title = data['title']
-        description = data['description']
+        product = data['product']
+        component = data['component']
+        component_description = data['component_description']
+        version = data['version']
         severity = data['severity']
+        os = data['os']
+        summary = data['summary']
         defect_sd = data['defect_sd']
         defect_ed = data['defect_ed']
         priority = data['priority']
         estimated_time = data['estimated_time']
         file_attachment = data['file_attachment']
-        logging.debug('Values Accepted')
 
         cursor = mydb.cursor()
         query = "SELECT COUNT(*) FROM defect WHERE defect_id=%s"
@@ -211,7 +295,7 @@ def updateDefect():
         if count == 0:
             return jsonify({"error": "Defect not found"}), 400
         
-        return updatedefects(title, description, severity, defect_sd, defect_ed, priority, estimated_time, file_attachment, defect_id, issue_id)
+        return updatedefects(issue_id, title, product, component, component_description, version,severity, os, summary, defect_sd, defect_ed, priority,estimated_time, file_attachment, defect_id)
 
     except KeyError as e:
         # Handle missing key in the request data
@@ -228,18 +312,18 @@ def createissuemember():
             logging.debug("entered into createissuemember" )
             data = request.get_json()
             issue_id = data['issue_id']
-            user_id = data['user_id']
-            project_id =data['project_id']
+            user_ID = data['user_ID']
+            Project_ID =data['Project_ID']
             logging.debug("accepted values")
 
             if not isinstance(issue_id, int):
                 return jsonify({'error': 'Invalid data type for issue_id'}), 400
-            if not isinstance(user_id, int):
-                return jsonify({'error': 'Invalid data type for user_id'}), 400
-            if not isinstance(project_id, int):
-                return jsonify({'error': 'Invalid data type for project_id'}), 400
+            if not isinstance(user_ID, int):
+                return jsonify({'error': 'Invalid data type for user_ID'}), 400
+            if not isinstance(Project_ID, int):
+                return jsonify({'error': 'Invalid data type for Project_ID'}), 400
  
-            return issue_member(issue_id, user_id,project_id)
+            return issue_member(issue_id, user_ID,Project_ID)
 
         except KeyError as e:
         # Handle missing key in the request data
@@ -262,15 +346,15 @@ def updateissuemember():
         data = request.get_json()
         issueMember_id = data['issueMember_id']
         issue_id = data['issue_id']
-        user_id = data['user_id']
-        project_id =data['project_id']
+        user_ID = data['user_ID']
+        Project_ID =data['Project_ID']
         logging.debug("accepted values")
 
-        if type(project_id)==str:
+        if type(Project_ID)==str:
              return jsonify({"Error": "String value inserted"}), 400
 
         logging.debug("calling issuemember_update function.")
-        return issuemembers_update(issue_id, user_id, project_id,issueMember_id)
+        return issuemembers_update(issue_id, user_ID, Project_ID,issueMember_id)
 
     except KeyError as e:
         # Handle missing key in the request data
@@ -310,20 +394,20 @@ def ProjectwiseIssue():
         dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
         logging.debug(dt_string + " User has made a call to ProjectwiseIssue")
         data = request.get_json()
-        project_id = data['project_id']
+        Project_ID = data['Project_ID']
         cursor = mydb.cursor()
-        query = "select * from Issue_Details i join project_issue m on i.issue_id = m.issue_id where project_id=%s"
-        values = (project_id,)
+        query = "select * from Issue_Details i join project_issue m on i.issue_id = m.issue_id where Project_ID=%s"
+        values = (Project_ID,)
         cursor.execute(query, values)
         result = cursor.fetchall()
         issue_details = []
         for row in result:
             issue = {
-                'Issue_Id': row[0],
-                'Issue_name': row[1],
-                'Description': row[2],
-                'Type': row[3],
-                'Status': row[4]
+                'issue_id': row[0],
+                'issue_name': row[1],
+                'description': row[2],
+                'type': row[3],
+                'status': row[4]
             }
             issue_details.append(issue)
 
@@ -341,22 +425,30 @@ def Assign_Issue():
         dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
         logging.debug(dt_string + " User has made a call to Assign_Issue api")
         data = request.get_json()
-        email_id = data['email_id']
+        Email_ID = data['Email_ID']
         issue_id = data['issue_id']
-        project_id=data['project_id']
+        Project_ID=data['Project_ID']
         cursor = mydb.cursor()
-        query1 = "select user_id from Users where email_id=%s"
-        values1 = (email_id,)
+        query1 = "select user_ID from Users where Email_ID=%s"
+        values1 = (Email_ID,)
         cursor.execute(query1, values1)
         userId = cursor.fetchone()[0]
         print("type of cursor is ",type(userId)," and "," value is ",userId)
         print("Select query executed succesfully")
-        query2 = "insert into issue_member(issue_id,user_id,project_id) values (%s,%s,%s);"
-        values2 = (issue_id,userId,project_id)
-        cursor.execute(query2, values2)
-        mydb.commit()
-        print("Data is inserted to issue_member table")
-        return jsonify({"msg":"Data is inserted to issue_member table"}), 200
+        query3="select * from Issue_Member where issue_id=%s and user_ID=%s and Project_ID=%s;"
+        values3 = (issue_id,userId,Project_ID)
+        cursor.execute(query3, values3)
+        present = cursor.fetchone()
+        print("value of present is ", present)
+        if not present :
+            query2 = "insert into Issue_Member(issue_id,user_ID,Project_ID) values (%s,%s,%s);"
+            values2 = (issue_id,userId,Project_ID)
+            cursor.execute(query2, values2)
+            mydb.commit()
+            print("Data is inserted to issue_member table")
+            return jsonify({"msg":"Data is inserted to issue_member table"}), 200
+        else:
+            return jsonify({"MSG":"issue is already assigned to user"}),200
     except Exception as e:
         logging.error("An error occurred: {}".format(str(e)))
         return jsonify({"error": "An error occurred: " + str(e)}), 500
@@ -447,14 +539,14 @@ def userwiseissue():
         dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
         logging.debug(dt_string + " Inside userwiseissue....")
         data = request.get_json()
-        user_id=data["user_id"]
+        user_ID=data["user_ID"]
         query ="""SELECT pd.Project_ID, pd.Project_Name, id.issue_id, id.issue_name, id.description, id.type, id.status
 FROM Project_Details pd
-JOIN issue_member im ON im.project_id = pd.Project_ID
+JOIN Issue_Member im ON im.Project_ID = pd.Project_ID
 JOIN Issue_Details id ON id.issue_id = im.issue_id
-WHERE im.user_id = %s;"""
+WHERE im.user_ID = %s;"""
 
-        values = (user_id,)
+        values = (user_ID,)
         cursor.execute(query,values)
         result = cursor.fetchall()
         print("id is ", result)
@@ -463,15 +555,61 @@ WHERE im.user_id = %s;"""
             issue = {
                 'Project_ID': row[0],
                 'Project_Name': row[1],
-                'Issue_Id': row[2],
-                'Issue_name': row[3],
-                'Description': row[4],
-                'Type': row[5],
-                'Status': row[6]
+                'issue_id': row[2],
+                'issue_name': row[3],
+                'description': row[4],
+                'type': row[5],
+                'status': row[6]
             }
             issue_details.append(issue)
         print("result of query is ",issue_details)
         return jsonify(issue_details)
+        
+    except KeyError as e:
+        # Handle missing key in the request data
+        #print("Missing key in request data: " + str(e))
+        return jsonify({"error": str(e)}), 400
+
+        
+    except Exception as e:
+        # Handle any other unexpected exceptions
+        print("An error occurred: " + str(e))
+        return jsonify({"error": "An error occurred: " + str(e)}), 500
+    
+
+def issuewiseuser():
+    try:
+        now = datetime.now()
+        dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
+        logging.debug(dt_string + " Inside userwiseissue....")
+        data = request.get_json()
+        issue_id=data["issue_id"]
+        query1 ="""select user_ID from Issue_Member where issue_id=%s;"""
+        values1 = (issue_id,)
+        cursor.execute(query1,values1)
+        result = cursor.fetchone()
+        print("result is ", result)
+        user_id=result[0]
+        print("id is ", user_id)
+        query2 ="""select * from Users where user_ID=%s;"""
+        values2 = (user_id,)
+        cursor.execute(query2,values2)
+        User_details=cursor.fetchall()
+        print(User_details)
+        user_details = []
+        for row in User_details:
+            issue = {
+                'user_ID': row[0],
+                'role': row[1],
+                'name': row[2],
+                'email_id': row[3],
+                'contact': row[5]
+
+            }
+            user_details.append(issue)
+        print("result of query is ", user_details)
+
+        return jsonify({"user to given issue are ":user_details})
         
     except KeyError as e:
         # Handle missing key in the request data

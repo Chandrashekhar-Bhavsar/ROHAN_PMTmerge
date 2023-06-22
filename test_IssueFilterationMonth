@@ -12,7 +12,7 @@ class TestIssueByMonthApi(unittest.TestCase):
         # Define the API endpoint for adding a new user
         API_ENDPOINT_post = "http://127.0.0.1:5000/IssueByMonth"
         # Prepare the data for the new user
-        data = {"project_id":202}
+        data = {"Project_ID":202}
         # Set the headers for the request
         headers = {'Content-type': 'application/json'}
         # Send a POST request to the API endpoint to add the new user
@@ -58,7 +58,7 @@ class TestIssueByMonthApi(unittest.TestCase):
         # Define the API endpoint for adding a new user
         API_ENDPOINT_post = "http://127.0.0.1:5000/IssueByMonth"
         # Prepare the data for the new user
-        data = {"project_id":"*&^%$"}
+        data = {"Project_ID":"*&^%$"}
         # Set the headers for the request
         headers = {'Content-type': 'application/json'}
         # Send a POST request to the API endpoint to add the new user

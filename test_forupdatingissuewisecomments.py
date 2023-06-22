@@ -99,7 +99,7 @@ class TestFlask(unittest.TestCase):
         API_ENDPOINT_post = "http://127.0.0.1:5000//update_issuewise_comments"
 
         # Prepare the data 
-        data =  {"project_id":13000,
+        data =  {"Project_ID":13000,
                 "comment_id":23,
                 "description":"comment added by shreya for issueid 3000 is to be updated."}
 

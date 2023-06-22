@@ -12,7 +12,7 @@ from datetime import datetime
 mydb=connect_db()
 cursor=mydb.cursor()
 def is_valid_name(name):
-    pattern = r'^[a-zA-Z][a-zA-Z0-9]*$'
+    pattern = r'^[a-zA-Z]+(?: [a-zA-Z]+)?$'
     return re.match(pattern, name) is not None and not name.isdigit()
 
 #to check valid email
@@ -34,16 +34,16 @@ def is_valid_phone_number(phone_number):
 
 ###############################################################################
 
-def user_add(name, email_id,hashed_password, contact,role):#add role after test3
+def user_add(Name, Email_ID,hashed_password, Contact,role):#add role after test3
         """This endpoint is used to add a new user to the system.
-          It expects the user's name, email ID, contact information,
+          It expects the user's name, email ID, Contact information,
         and generates an OTP (One-Time Password) to be sent to the user's email address. The user's information, along with the hashed OTP, is then stored in the database."""
         now = datetime.now()
         dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
         logging.debug(dt_string + " Inside user_add function.....")
         logging.debug(dt_string + " Adding the users details into the database...")
         query = "INSERT INTO Users ( Name, Email_ID, password ,Contact,roles) VALUES (%s, %s, %s,%s,%s);" #add role after test
-        values = ( name, email_id,hashed_password, contact,role)#add role after test
+        values = ( Name, Email_ID,hashed_password, Contact,role)#add role after test
         cursor.execute(query, values)
         mydb.commit()
         logging.debug(dt_string + " Details successfully updated into the database....")
@@ -58,16 +58,16 @@ def user_show():
             dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
             logging.debug(dt_string + " Inside user_show function.....")
             logging.debug(dt_string+"showing all the users")
-            query = "select user_id,name,email_id,contact,roles from Users;"
+            query = "select user_ID,Name,Email_ID,Contact,roles from Users;"
             cursor.execute(query)
             id=cursor.fetchall()
             user_list = []
             for project in id:
                     user_dict = {
-                        'user_id': project[0],
-                        'name': project[1],
-                        'Email_id' : project[2],
-                        'contact' : project[3],
+                        'user_ID': project[0],
+                        'Name': project[1],
+                        'Email_ID' : project[2],
+                        'Contact' : project[3],
                         "role" : project[4]
                     }
                     user_list.append(user_dict)
@@ -76,7 +76,7 @@ def user_show():
 
 #################################################################################################
 
-def user_assign(project_id,user_ID,role_in_project):
+def user_assign(Project_ID,user_ID,role_in_project):
             """This endpoint is used to assign a user to a particular project. 
             It expects the project ID, user ID, and the user's role in the project.
               If the role is "Project manager," it returns a message indicating that there can only be one project manager per project. Otherwise, it adds the user to the project and returns a list of all users assigned to that project."""
@@ -85,51 +85,51 @@ def user_assign(project_id,user_ID,role_in_project):
             dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
             logging.debug(dt_string + " Inside user_assign function.....")
 
-            query="select * from Project_Details where project_id=%s"
-            values=(project_id,)
+            query="select * from Project_Details where Project_ID=%s"
+            values=(Project_ID,)
             cursor.execute(query,values)
             a=cursor.fetchall()
             if not a:
-                return jsonify({"error": "Invalid project_id"}), 400
+                return jsonify({"error": "Invalid Project_ID"}), 400
             logging.debug(dt_string + " Inside user_assign ")
 
             
-            query="select * from Users where user_id=%s"
+            query="select * from Users where user_ID=%s"
             values=(user_ID,)
             cursor.execute(query,values)
             a=cursor.fetchall()
             if not a:
-                return jsonify({"error": "Invalid user_id"}), 400
+                return jsonify({"error": "Invalid user_ID"}), 400
 
-            query = "select * from project_member where user_id=%s and project_id=%s;"
-            values=(user_ID,project_id)
+            query = "select * from project_member where user_ID=%s and Project_ID=%s;"
+            values=(user_ID,Project_ID)
             cursor.execute(query,values)
             id=cursor.fetchone()
             if id:
                    return jsonify({"error":"User already associated with the project."}),400
             
             logging.debug(dt_string + " Associating the user with the requisite project...")
-            query = "INSERT INTO project_member(project_id,user_id,role_in_project) VALUES(%s,%s,%s);"
-            values = (project_id,user_ID,role_in_project)
+            query = "INSERT INTO project_member(Project_ID,user_ID,role_in_project) VALUES(%s,%s,%s);"
+            values = (Project_ID,user_ID,role_in_project)
             cursor.execute(query, values)
             mydb.commit()
             logging.debug(dt_string + " The user successfully associated with the project....")
-            # to fetch id of newly added member and all user_ids
-            #query = "select user_id, name ,roles,Email_id,contact from users where user_id in (select user_id from project_member where project_id=%s);"
+            # to fetch id of newly added member and all user_IDs
+            #query = "select user_ID, name ,roles,Email_ID,Contact from users where user_ID in (select user_ID from project_member where Project_ID=%s);"
             logging.debug(dt_string + " Getting a list of all users associated with the requisite project...")
-            query = "select u.user_id, name ,role_in_project , email_id,contact from users u ,project_member m where u.user_id=m.user_id and project_id=%s"
-            values = (project_id,)
+            query = "select u.user_ID, name ,role_in_project , Email_ID,Contact from users u ,project_member m where u.user_ID=m.user_ID and Project_ID=%s"
+            values = (Project_ID,)
             cursor.execute(query, values)
            
             id=cursor.fetchall()
             user_list = []
             for project in id:
                     user_dict = {
-                        'user_id': project[0],
-                        'name': project[1],
+                        'user_ID': project[0],
+                        'Name': project[1],
                         'roles_in_project': project[2],
-                        'Email_id' : project[3],
-                        'contact' : project[4]
+                        'Email_ID' : project[3],
+                        'Contact' : project[4]
                     }
                     user_list.append(user_dict)
             logging.debug(dt_string + " returning a list of all users...")
@@ -137,7 +137,7 @@ def user_assign(project_id,user_ID,role_in_project):
 
 ############################################################################################
 
-def project_commentadd(project_id,description,user_id):
+def project_commentadd(Project_ID,description,user_ID):
         """This endpoint is used to add a comment to a project.
           It expects the project ID, user ID, and the comment description. 
           The comment is then stored in the database, and the newly added comment, along with other comments for that project, is returned."""
@@ -147,19 +147,19 @@ def project_commentadd(project_id,description,user_id):
         logging.debug(dt_string + " Inside project_commentadd function .....")
         logging.debug(dt_string +  " Adding comment to the project....")
 
-        query = "select Name from Users where user_id =%s"
-        values = (user_id,)
+        query = "select Name from Users where user_ID =%s"
+        values = (user_ID,)
         cursor.execute(query,values)
         a_name=cursor.fetchone()
         if not a_name:
-            return jsonify({"error": "Invalid user_id"}), 400
+            return jsonify({"error": "Invalid user_ID"}), 400
         author_name=a_name[0]
         
         print(author_name)
         logging.debug(dt_string + "noted....")
         
-        query = "INSERT INTO comments(id, description, user_id, author_name, date) VALUES (%s, %s, %s, %s, now())"
-        values = (project_id, description, user_id, author_name)
+        query = "INSERT INTO comments(ID, description, user_ID, author_name, date) VALUES (%s, %s, %s, %s, now())"
+        values = (Project_ID, description, user_ID, author_name)
         cursor.execute(query, values)
         mydb.commit()
 
@@ -167,17 +167,17 @@ def project_commentadd(project_id,description,user_id):
         # to fetch newly added member comments
         logging.debug(dt_string + " getting all the comments associated with this project....")
         query = "select * from comments where id=%s;"
-        values = (project_id,)
+        values = (Project_ID,)
         cursor.execute(query, values)
         id=cursor.fetchall()
         logging.debug(dt_string + " All comments fetched sucessfully....")
         comments_list = []
         for project in id:
                 comments_dict = {
-                    'comment_id': project[0],
-                    'id': project[1],
+                    'comment_ID': project[0],
+                    'ID': project[1],
                     'description': project[2],
-                    'user_id' : project[3],
+                    'user_ID' : project[3],
                     'date' : project[4]
                 }
                 comments_list.append(comments_dict)
@@ -187,7 +187,7 @@ def project_commentadd(project_id,description,user_id):
 
 #######################################################################################
 
-def issue_commentadd(issue_id,description,user_id):
+def issue_commentadd(issue_id,description,user_ID):
         """This endpoint is used to add a comment to an issue.
           It expects the issue ID, user ID, the author's name, and the comment description. 
           The comment is then stored in the database, and the newly added comment, along with other comments for that issue, is returned."""
@@ -197,32 +197,32 @@ def issue_commentadd(issue_id,description,user_id):
         logging.debug(dt_string + " Inside issue_commentadd function.....")
         logging.debug(dt_string + " Adding new comment to issue_id passed ", issue_id)
 
-        query = "select Name from users where user_id =%s"
-        values = (user_id,)
+        query = "select Name from Users where user_ID =%s"
+        values = (user_ID,)
         cursor.execute(query, values)
         a_name=cursor.fetchone()
         if not a_name:
-            return jsonify({"error": "Invalid user_id"}), 400
+            return jsonify({"error": "Invalid user_ID"}), 400
         author_name=a_name[0]
 
-        query = "INSERT INTO comments(id,description,user_id,author_name,date) VALUES (%s, %s,%s,%s,now())"
-        values = (issue_id,description,user_id,author_name)
+        query = "INSERT INTO comments(ID,description,user_ID,author_name,date) VALUES (%s, %s,%s,%s,now())"
+        values = (issue_id,description,user_ID,author_name)
         cursor.execute(query, values)
         mydb.commit()
         logging.debug(dt_string + " Comment added sucessfully to issue_id ", issue_id)
         # to fetch newly added member comments
         logging.debug(dt_string + " Fetching all the comments related to issue ", issue_id)
-        query = "select * from comments where id=%s;"
+        query = "select * from comments where ID=%s;"
         values = (issue_id,)
         cursor.execute(query, values)
         id=cursor.fetchall()
         comments_list = []
         for project in id:
                 comments_dict = {
-                    'comment_id': project[0],
-                    'id': project[1],
+                    'comment_ID': project[0],
+                    'ID': project[1],
                     'description': project[2],
-                    'user_id' : project[3],
+                    'user_ID' : project[3],
                     'author_name': project[4],
                     'date' : project[5]
                 }
@@ -232,7 +232,7 @@ def issue_commentadd(issue_id,description,user_id):
 
 ##############################################################################
 
-def displaycomments_projectswise(project_id):
+def displaycomments_projectswise(Project_ID):
         """This endpoint is used to display all the comments related to a specific project. 
         It expects the project ID and retrieves all the comments associated with that project from the database. 
         The comments are returned as a JSON response"""
@@ -240,20 +240,20 @@ def displaycomments_projectswise(project_id):
         now = datetime.now()
         dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
         logging.debug(dt_string + " Inside displaycomments_projectwise function.....")
-        logging.debug(dt_string + " Fetching all the comments related to this project with project_id ",project_id)
-        query = "select comment_id,user_id,description,author_name,date from comments where id=%s;"
-        values = (project_id,)
+        logging.debug(dt_string + " Fetching all the comments related to this project with Project_ID ",Project_ID)
+        query = "select comment_ID,user_ID,description,author_name,date from comments where ID=%s;"
+        values = (Project_ID,)
         cursor.execute(query, values)
         id=cursor.fetchall()
         if(id is None):
-                return jsonify({"error":"no project found with this project_id"}),400
+                return jsonify({"error":"no project found with this Project_ID"}),400
         
         logging.debug(dt_string + " All the comments if exists fetched sucessfuly ....")
         comments_list = []
         for project in id:
                 comments_dict = {
-                    'comment_id': project[0],
-                    'user_id' : project[1],
+                    'comment_ID': project[0],
+                    'user_ID' : project[1],
                     'description': project[2],
                     'author_name' : project[3],
                     'date' : project[4]
@@ -262,7 +262,7 @@ def displaycomments_projectswise(project_id):
         if(len(comments_list)==0 ):
             return jsonify({"error":"no matching results"}),400
         else:
-            logging.debug(dt_string + " returning the list of all comments for the project with project_id ", project_id)
+            logging.debug(dt_string + " returning the list of all comments for the project with Project_ID ", Project_ID)
             return jsonify(comments_list),200
         
 
@@ -277,7 +277,7 @@ def displaycomments_issuewise(issue_id):
         dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
         logging.debug(dt_string + " Inside displaycomments_issuewise function.....")
         logging.debug(dt_string +  " Fetching all the comments related to the issue with issue_id ",issue_id)
-        query = "select comment_id,user_id,description,author_name,date from comments where id = %s"
+        query = "select comment_ID,user_ID,description,author_name,date from comments where ID = %s"
         values = (issue_id,)
         cursor.execute(query, values)
         id=cursor.fetchall()
@@ -288,8 +288,8 @@ def displaycomments_issuewise(issue_id):
         comments_list = []
         for project in id:
                 comments_dict = {
-                    'comment_id': project[0],
-                    'user_id' : project[1],
+                    'comment_ID': project[0],
+                    'user_ID' : project[1],
                     'description': project[2],
                     'author_name' : project[3],
                     'date' : project[4]
@@ -304,16 +304,16 @@ def displaycomments_issuewise(issue_id):
 
 ####################################################################################
 
-def updateprojectwise_comments(user_id, description, comment_id, project_id):
+def updateprojectwise_comments(user_ID, description, comment_ID, Project_ID):
     """
     Updates a project-wise comment in the database.
 
     Args:
-        user_id (int): The ID of the user making the comment.
+        user_ID (int): The ID of the user making the comment.
         description (str): The updated comment description.
         author_name (str): The author's name.
-        comment_id (int): The ID of the comment to be updated.
-        project_id (int): The ID of the project.
+        comment_ID (int): The ID of the comment to be updated.
+        Project_ID (int): The ID of the project.
 
     Returns:
         list: A list of dictionaries representing the updated comments for the project, each containing the comment details.
@@ -325,36 +325,36 @@ def updateprojectwise_comments(user_id, description, comment_id, project_id):
     now = datetime.now()
     dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
     logging.debug(dt_string + " Inside updateprojectwise_comments function.....")
-    logging.debug(dt_string + "fetching the author name based on user_id")
+    logging.debug(dt_string + "fetching the author name based on user_ID")
     # Fetch the author_name from the users table
 
-    query = "SELECT Name FROM users WHERE user_id = %s"
-    values = (user_id,)
+    query = "SELECT Name FROM users WHERE user_ID = %s"
+    values = (user_ID,)
     cursor.execute(query, values)
     a_name=cursor.fetchone()
     if not a_name:
-            return jsonify({"error": "Invalid user_id"}), 400
+            return jsonify({"error": "Invalid user_ID"}), 400
     author_name=a_name[0]  # Assign the fetched result to a variable
     logging.debug(dt_string + " The author name fetched sucessfully.... ")
     # Update the comment
     logging.debug(dt_string + " Updating the comment...")
-    query="select * from comments where comment_id=%s "
-    values=(comment_id,)
+    query="select * from comments where comment_ID=%s "
+    values=(comment_ID,)
     cursor.execute(query,values)
     a=cursor.fetchone()
     if not a:
-            return jsonify({"error": "Invalid comment_id"}), 400
+            return jsonify({"error": "Invalid comment_ID"}), 400
     logging.debug(dt_string + " Updating the comment")
-    query = "UPDATE comments SET description = %s, user_id = %s, author_name = %s , date=now() WHERE comment_id = %s;"
-    values = (description, user_id, author_name, comment_id)
+    query = "UPDATE comments SET description = %s, user_ID = %s, author_name = %s , date=now() WHERE comment_ID = %s;"
+    values = (description, user_ID, author_name, comment_ID)
     cursor.execute(query, values)
     mydb.commit()
     logging.debug(dt_string + " Comment updated sucessfully...")
 
     # Retrieve the updated comments for the project
     logging.debug(dt_string + " Fetching all the comments along with the upade")
-    query = "SELECT comment_id, user_id, description, author_name, date FROM comments WHERE id = %s"
-    values = (project_id,)
+    query = "SELECT comment_ID, user_ID, description, author_name, date FROM comments WHERE ID = %s"
+    values = (Project_ID,)
     cursor.execute(query, values)
 
     updated_comments = cursor.fetchall()
@@ -362,8 +362,8 @@ def updateprojectwise_comments(user_id, description, comment_id, project_id):
     comments_list = []
     for project in updated_comments:
         comments_dict = {
-            'comment_id': project[0],
-            'user_id': project[1],
+            'comment_ID': project[0],
+            'user_ID': project[1],
             'description': project[2],
             'author_name': project[3],
             'date': project[4]
@@ -375,13 +375,13 @@ def updateprojectwise_comments(user_id, description, comment_id, project_id):
 
 ##########################################################################
 
-def updateissuewise_comments(user_id,description,comment_id,issue_id):
+def updateissuewise_comments(user_ID,description,comment_ID,issue_id):
                 """Update an issue comment with the provided details.
 
                 Args:
-                user_id (int): The ID of the user updating the comment.
+                user_ID (int): The ID of the user updating the comment.
                 description (str): The updated comment description.
-                comment_id (int): The ID of the comment to update.
+                comment_ID (int): The ID of the comment to update.
                 issue_id (int): The ID of the issue associated with the comment.
 
                 Returns:
@@ -395,32 +395,32 @@ def updateissuewise_comments(user_id,description,comment_id,issue_id):
                 dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
                 logging.debug(dt_string + " Inside updateissuewise_comments API.....")
 
-                logging.debug(dt_string + " fetching name from the given the user_id")
+                logging.debug(dt_string + " fetching name from the given the user_ID")
                 
-                query = "select Name from users where user_id =%s"
-                values = (user_id,)
+                query = "select Name from users where user_ID =%s"
+                values = (user_ID,)
                 cursor.execute(query, values)
                 a_name=cursor.fetchone()
                 if not a_name:
-                        return jsonify({"error": "Invalid user_id"}), 400
+                        return jsonify({"error": "Invalid user_ID"}), 400
                 author_name=a_name[0]  # Assign the fetched result to a variable
                 logging.debug(dt_string + " Assigned the fetched name to author name.")
                 logging.debug(dt_string + " Updating the comment related details into the databse....")
 
-                query="select * from comments where comment_id=%s "
-                values=(comment_id,)
+                query="select * from comments where comment_ID=%s "
+                values=(comment_ID,)
                 cursor.execute(query,values)
                 a=cursor.fetchone()
                 if not a:
-                    return jsonify({"error": "Invalid comment_id"}), 400
+                    return jsonify({"error": "Invalid comment_ID"}), 400
 
-                query = "update comments set description=%s,user_id=%s,author_name=%s where comment_id=%s;"
-                values = (description,user_id,author_name,comment_id)
+                query = "update comments set description=%s,user_ID=%s,author_name=%s where comment_ID=%s;"
+                values = (description,user_ID,author_name,comment_ID)
                 cursor.execute(query, values)
                 mydb.commit()
                 logging.debug(dt_string + " updation done successfully....")
                 logging.debug(dt_string + " Fetching all the comments ...")
-                query = "select comment_id,user_id,description,author_name,date from comments where id = %s"
+                query = "select comment_ID,user_ID,description,author_name,date from comments where ID = %s"
                 values = (issue_id,)
                 cursor.execute(query, values)
 
@@ -429,8 +429,8 @@ def updateissuewise_comments(user_id,description,comment_id,issue_id):
                 comments_list = []
                 for project in id:
                         comments_dict = {
-                        'comment_id': project[0],
-                        'user_id' : project[1],
+                        'comment_ID': project[0],
+                        'user_ID' : project[1],
                         'description': project[2],
                         'author_name' : project[3],
                         'date' : project[4]
@@ -441,21 +441,21 @@ def updateissuewise_comments(user_id,description,comment_id,issue_id):
 
 #######################################################################################
 
-def delete_comments(comment_id):
-            """it deletes a comment based on comment_id"""
+def delete_comments(comment_ID):
+            """it deletes a comment based on comment_ID"""
             now = datetime.now()
             dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
             logging.debug(dt_string + " Inside delete_comments function.....")
             
-            query="select * from comments where comment_id=%s "
-            values=(comment_id,)
+            query="select * from comments where comment_ID=%s "
+            values=(comment_ID,)
             cursor.execute(query,values)
             a=cursor.fetchone()
             if not a:
-                    return jsonify({"error": "Invalid comment_id"}), 400
+                    return jsonify({"error": "Invalid comment_ID"}), 400
 
-            query = "delete from comments where comment_id=%s;"
-            values= (comment_id,)
+            query = "delete from comments where comment_ID=%s;"
+            values= (comment_ID,)
             cursor.execute(query,values)
             mydb.commit()
             
@@ -463,7 +463,7 @@ def delete_comments(comment_id):
 
 
 
-def create_project_query(User_id,project_name, project_description, 
+def create_project_query(user_ID,project_name, project_description, 
                    planned_sd, planned_ed, actual_sd, actual_ed,
                   planned_hours, actual_hours, status, project_lead, 
                   client_name, risk, mitigation):
@@ -473,13 +473,13 @@ def create_project_query(User_id,project_name, project_description,
                   planned_hours, actual_hours, status, project_lead, client_name, risk, mitigation)
         cursor.execute(query1, values1)
         mydb.commit()
-        query2 =  "select project_id from Project_Details where project_name = %s;"
+        query2 =  "select Project_ID from Project_Details where project_name = %s;"
         values2 = (project_name,)
         cursor.execute(query2,values2)
         id =cursor.fetchone()
         print(id[0])
-        query3 = "Insert into project_member(user_id,project_id) values(%s,%s);"
-        values3 = (User_id,id[0])
+        query3 = "Insert into project_member(user_ID,Project_ID) values(%s,%s);"
+        values3 = (user_ID,id[0])
         cursor.execute(query3,values3)
         mydb.commit()
         return jsonify({"message": "Project created successfully"}), 200
@@ -488,11 +488,11 @@ def create_project_query(User_id,project_name, project_description,
 
 
 def update_project_details(project_name, project_description, planned_sd, planned_ed, actual_sd, actual_ed,
-                  planned_hours, actual_hours, status, project_lead, client_name, risk, mitigation, project_id):
+                  planned_hours, actual_hours, status, project_lead, client_name, risk, mitigation, Project_ID):
         cursor = mydb.cursor()
-        query = "UPDATE Project_Details SET project_name = %s, project_description = %s, planned_sd = %s, planned_ed = %s,actual_sd = %s,actual_ed = %s,planned_hours = %s,actual_hours =%s,status = %s,project_lead = %s,client_name = %s,risk = %s,mitigation = %s where project_id = %s"
+        query = "UPDATE Project_Details SET project_name = %s, project_description = %s, planned_sd = %s, planned_ed = %s,actual_sd = %s,actual_ed = %s,planned_hours = %s,actual_hours =%s,status = %s,project_lead = %s,client_name = %s,risk = %s,mitigation = %s where Project_ID = %s"
         values = (project_name, project_description, planned_sd, planned_ed, actual_sd, actual_ed,
-                  planned_hours, actual_hours, status, project_lead, client_name, risk, mitigation, project_id)
+                  planned_hours, actual_hours, status, project_lead, client_name, risk, mitigation, Project_ID)
         cursor.execute(query, values)
         mydb.commit()
         return jsonify({"message": "Project updated successfully"}), 200
@@ -500,31 +500,8 @@ def update_project_details(project_name, project_description, planned_sd, planne
 
 
 
+############################ CREATE ISSUE  #################################
 
-############################ CREATE TASK #################################
-
-def createtask(issue_id, title, description, task_sd, task_ed, estimated_time, priority):
-        logging.debug("Inside createtask function")
-        query = "INSERT INTO Task (issue_id,title, description, task_sd, task_ed, estimated_time, priority) VALUES (%s, %s, %s, %s, %s, %s,%s)"
-        values = (issue_id, title, description, task_sd, task_ed, estimated_time, priority)
-        cursor.execute(query, values)
-        mydb.commit()
-
-        return jsonify({"message": "Task created successfully"}), 200
-
-############################ UPDATE TASK #################################
-
-
-
-############################ DELETE TASK #################################
-
-def deletetask(task_id):
-        
-        query = "DELETE FROM task WHERE task_id = %s"
-        values = (task_id,)
-        cursor.execute(query, values)
-        mydb.commit()
-        return jsonify({"message": "Task Deleted successfully"}), 200
 
 def create_issue(Issue_name, Description):
         query = "INSERT INTO issue_details (issue_name, description) VALUES (%s, %s)"
@@ -539,45 +516,63 @@ def create_issue(Issue_name, Description):
 
 ########################### UPDATE ISSUE DETAILS #################################
 
-def updateissues(issue_name, description, issue_id):
+def updateissues(status,issue_id):
    
-
-        query = "UPDATE issue_details SET issue_name = %s,description = %s WHERE issue_id=%s"
-        values = (issue_name, description, issue_id)
+        logging.debug("Inside updateissues function")
+        
+        query = "UPDATE Issue_Details SET status = %s WHERE issue_id=%s"
+        values = (status, issue_id)
         cursor.execute(query, values)
         mydb.commit()
 
+        logging.debug("Issue updated: status={}".format(status))
+        return jsonify({"message": "Issue Updated Successfully"}), 200
+
+
+########################### UPDATE ISSUE DESCRIPTION #################################
+
+def updateissuesdesc(descripition,issue_id):
+   
+        logging.debug("Inside updateissues function")
+        
+        query = "UPDATE Issue_Details SET description = %s WHERE issue_id=%s"
+        values = (descripition, issue_id)
+        cursor.execute(query, values)
+        mydb.commit()
+
+        logging.debug("Issue updated: description={}".format(descripition))
         return jsonify({"message": "Issue Updated Successfully"}), 200
 
 
 
 ############################ DELETE ISSUE DETAILS #################################
 
-def deleteissue(issue_id):
+def deleteissues(issue_id):
+        logging.debug("Inside deleteissues function")
         
-        # Delete related records from issue_member table
-        member_query = "DELETE FROM issue_member WHERE issue_id = %s"
-        values = (issue_id,)
-        cursor.execute(member_query, values)
 
+        check_query = "SELECT * FROM Issue_Details WHERE issue_id = %s"
+        cursor.execute(check_query, (issue_id,))
+        result = cursor.fetchone()
+        if result is None:
+            return jsonify({"error": "Issue not found"}), 400
+        
         # Delete related records from defect table
-        defect_query = "DELETE FROM defect WHERE issue_id = %s"
+        defect_query = "DELETE FROM Defect WHERE issue_id = %s"
+        values = (issue_id,)
         cursor.execute(defect_query, values)
-
+        
         # Delete related records from Task table
-        task_query = "DELETE FROM task WHERE issue_id = %s"
+        task_query = "DELETE FROM Task WHERE issue_id = %s"
         cursor.execute(task_query, values)
 
-        # Delete related records from file table
-        file_query = "DELETE FROM file WHERE issue_id = %s"
-        cursor.execute(file_query, values)
-
+        
         # Delete related records from issue_workflow table
-        issuewf_query = "DELETE FROM issueworkflow_connection WHERE issue_id = %s"
+        issuewf_query = "DELETE FROM Issueworkflow_Connection WHERE issue_id = %s"
         cursor.execute(issuewf_query, values)
-
+    
         # Delete project details from issue_details table
-        query = "DELETE FROM issue_details WHERE issue_id = %s"
+        query = "DELETE FROM Issue_Details WHERE issue_id = %s"
         cursor.execute(query, values)
         mydb.commit()
 
@@ -586,27 +581,25 @@ def deleteissue(issue_id):
         return jsonify({"message": "Issue Deleted successfully"}), 200
 
 ############################ CREATE TASK #################################
-'''
-def createtask(issue_id, description, status, task_sd, task_ed, planned_hours, actual_hours,priority):
-        
-        query = "INSERT INTO Task (issue_id, description, status, task_sd, task_ed, planned_hours, actual_hours, priority) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-        values = (issue_id, description, status, task_sd, task_ed, planned_hours, actual_hours,priority)
+
+def createtask(issue_id, title, task_sd, task_ed, estimated_time, priority):
+        logging.debug("Inside createtask function")
+        query = "INSERT INTO Task (issue_id,title,task_sd, task_ed, estimated_time, priority) VALUES (%s, %s, %s, %s, %s,%s)"
+        values = (issue_id, title, task_sd, task_ed, estimated_time, priority)
         cursor.execute(query, values)
         mydb.commit()
 
-        logging.debug("Task created: issue_id={}, description={}, status={}, task_sd={}, task_ed={}, planned_hours={}, actual_hours={}, priority={}".format(issue_id, description, status, task_sd, task_ed, planned_hours, actual_hours, priority))
-        return jsonify({"message": "Task created successfully"}), 200'''
+        return jsonify({"message": "Task created successfully"}), 200
 
 ############################ UPDATE TASK #################################
 
-def updatetask(title, description, task_sd, task_ed, estimated_time, priority, file_attachment, task_id, issue_id):
+def updatetask( title, task_sd, task_ed, estimated_time, priority, file_attachment, task_id, issue_id):
         logging.debug("Inside update task function")
-        query = "UPDATE Task SET title = %s, description = %s,task_sd=%s, task_ed=%s, estimated_time=%s, priority=%s, file_attachment=%s WHERE task_id=%s and issue_id=%s"
-        values = ( title, description, task_sd, task_ed, estimated_time, priority, file_attachment, task_id, issue_id)
+        query = "UPDATE Task SET title = %s,task_sd=%s, task_ed=%s, estimated_time=%s, priority=%s, file_attachment=%s WHERE task_id=%s and issue_id=%s"
+        values = ( title, task_sd, task_ed, estimated_time, priority, file_attachment, task_id, issue_id)
         cursor.execute(query, values)
         mydb.commit()
-
-
+        mydb.close()
         return jsonify({"message": "Task updated successfully"}), 200
 
 ############################ DELETE TASK #################################
@@ -623,19 +616,22 @@ def deletetask(task_id):
 
 ############################ CREATE DEFECT #################################
 
-def createdefects(issue_id, title, description, severity, defect_sd, defect_ed, priority, estimated_time):
-        logging.debug("Inside create defects function")
-        query = "INSERT INTO defect (issue_id, title, description, severity, defect_sd, defect_ed, priority, estimated_time) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-        values = (issue_id, title, description, severity, defect_sd, defect_ed, priority, estimated_time)
+def createdefects(issue_id, title, product, component, component_description, version,severity, os, summary, defect_sd, defect_ed, priority,estimated_time):
+        query = "INSERT INTO Defect (issue_id, title, product, component, component_description, version, severity, OS, summary, defect_sd, defect_ed, priority,estimated_time) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        values = (issue_id, title, product, component, component_description, version,severity, os, summary, defect_sd, defect_ed, priority,estimated_time)
         cursor.execute(query, values)
         mydb.commit()
 
-        logging.debug("Defect created: issue_id={},title={}, description={}, severity={}, defect_sd={}, defect_ed={}, priority={}, estimated_time={}".format(issue_id,title, description,severity, defect_sd, defect_ed, priority, estimated_time))
-        return jsonify({"message": "Defect created successfully"}), 200
+        return jsonify({'message': 'Defect created successfully'}), 200
 
 ############################ UPDATE DEFECT #################################
+def updatedefects(issue_id, title, product, component, component_description, version,severity, os, summary, defect_sd, defect_ed, priority,estimated_time, file_attachment, defect_id):
+        query = "UPDATE Defect SET issue_id=%s, title=%s, product=%s, component=%s, component_description=%s,version=%s, severity=%s, os=%s, summary=%s, defect_sd=%s, defect_ed=%s,priority=%s, estimated_time=%s, file_attachment=%s WHERE defect_id=%s"
+        values = (issue_id, title, product, component, component_description, version,severity, os, summary, defect_sd, defect_ed, priority,estimated_time, file_attachment, defect_id)
+        cursor.execute(query, values)
+        mydb.commit()
 
-
+        return jsonify({'message': 'Defect updated successfully'}), 200
 
 ############################ DELETE DEFECT #################################
 
@@ -650,26 +646,26 @@ def deletedefect(defect_id):
         return jsonify({"message": "Defect Deleted successfully"}), 200
 
 
-def user_update(user_id , name, email_id, contact):#add role after test3
+def user_update(user_ID , Name, Email_ID, Contact):#add role after test3
         now = datetime.now()
         dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
         logging.debug(dt_string + " Inside user_update function.....")
 
-        query = "Select email_id from Users where user_id = %s;"
-        values = (user_id,)
+        query = "Select Email_ID from Users where user_ID = %s;"
+        values = (user_ID,)
         cursor.execute(query,values)
         id = cursor.fetchone()
         print(id)
-        if(id[0]==email_id):
-               query="update Users set name = %s, contact = %s where user_id = %s;"
-               values = (name,contact,user_id)
+        if(id[0]==Email_ID):
+               query="update Users set Name = %s, Contact = %s where user_ID = %s;"
+               values = (Name,Contact,user_ID)
                cursor.execute(query,values)
                mydb.commit()
                logging.debug(dt_string + "User details updated successfully.")
                return jsonify({"msg":" User Details updated successfully"}),200
         logging.debug(dt_string,"checking if the email is already associated with exixting user.")
-        query = "select user_id from Users where email_id = %s;"
-        values = (email_id,)
+        query = "select user_ID from Users where Email_ID = %s;"
+        values = (Email_ID,)
         cursor.execute(query,values)
         id=cursor.fetchall()
         if id :
@@ -711,7 +707,7 @@ def user_update(user_id , name, email_id, contact):#add role after test3
             return otp
 
         # Example usage
-        email = email_id  # Replace with the recipient's email address
+        email = Email_ID  # Replace with the recipient's email address
         
         logging.debug(dt_string + " calling generate_otp function...")
         
@@ -730,8 +726,8 @@ def user_update(user_id , name, email_id, contact):#add role after test3
         hashed_password =hashlib.sha256(str(otp).encode('utf-8')).hexdigest()
 
         logging.debug(dt_string + " updating the users details into the database...")
-        query = "update  Users set Name = %s, Email_ID =%s,Contact = %s , password = %s where user_id = %s ;" #add role after test
-        values = ( name, email_id, contact,hashed_password,user_id)#add role after test
+        query = "update  Users set Name = %s, Email_ID =%s,Contact = %s , password = %s where user_ID = %s ;" #add role after test
+        values = ( Name, Email_ID, Contact,hashed_password,user_ID)#add role after test
         cursor.execute(query, values)
         mydb.commit()
         logging.debug(dt_string + " Details successfully updated into the database....")
@@ -739,28 +735,28 @@ def user_update(user_id , name, email_id, contact):#add role after test3
         return jsonify({"message": "User details updated successfully."}), 200
 
 
-def user_delete(user_id):
+def user_delete(user_ID):
         now = datetime.now()
         dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
         logging.debug(dt_string + " Inside user_delete function.....")
-        query = "select 1 from Users where user_id=%s;"
-        values = (user_id,)
+        query = "select 1 from Users where user_ID=%s;"
+        values = (user_ID,)
         cursor.execute(query,values)
         id = cursor.fetchone()
         if not id:
                return jsonify({"error":"User doesn't exists."}),400
-        query1 = "delete from project_member where user_id=%s;"
-        values1 = (user_id,)
+        query1 = "delete from project_member where user_ID=%s;"
+        values1 = (user_ID,)
         cursor.execute(query1,values1)
-        query2 = "delete from Users where user_id = %s;"
-        values2 = (user_id,)
+        query2 = "delete from Users where user_ID = %s;"
+        values2 = (user_ID,)
         cursor.execute(query2,values2)
         mydb.commit()
         return jsonify({"msg":"User Successfully deleted."}),200
 
 
 
-def commentadd(id,description,user_id):
+def commentadd(ID, description,user_ID):
         """This endpoint is used to add a comment to a project.
           It expects the project ID, user ID, and the comment description. 
           The comment is then stored in the database, and the newly added comment, along with other comments for that project, is returned."""
@@ -770,19 +766,19 @@ def commentadd(id,description,user_id):
         logging.debug(dt_string + " Inside project_commentadd function .....")
         logging.debug(dt_string +  " Adding comment to the project....")
 
-        query = "select Name from Users where user_id =%s"
-        values = (user_id,)
+        query = "select Name from Users where user_ID =%s"
+        values = (user_ID,)
         cursor.execute(query,values)
         a_name=cursor.fetchone()
         if not a_name:
-            return jsonify({"error": "Invalid user_id"}), 400
+            return jsonify({"error": "Invalid user_ID"}), 400
         author_name=a_name[0]
         
         print(author_name)
         logging.debug(dt_string + "noted....")
         
-        query = "INSERT INTO comments(id, description, user_id, author_name, date) VALUES (%s, %s, %s, %s, now())"
-        values = (id, description, user_id, author_name)
+        query = "INSERT INTO comments(ID, description, user_ID, author_name, date) VALUES (%s, %s, %s, %s, now())"
+        values = (ID, description, user_ID, author_name)
         cursor.execute(query, values)
         mydb.commit()
 
@@ -793,11 +789,9 @@ def commentadd(id,description,user_id):
 
 
 
-
-
 #############################################################################################
 
-def displaycomments(id):
+def displaycomments(ID):
         """This endpoint is used to display all the comments related to a specific issue. 
         It expects the project ID and issue ID and retrieves all the comments associated with that issue from the database.
           The comments are returned as a JSON response."""
@@ -805,17 +799,17 @@ def displaycomments(id):
         now = datetime.now()
         dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
         logging.debug(dt_string + " Inside displaycomments_issuewise function.....")
-        logging.debug(dt_string +  " Fetching all the comments related to the issue with issue_id ",id)
-        query = "select comment_id,user_id,description,author_name,date from comments where id = %s"
-        values = (id,)
+        logging.debug(dt_string +  " Fetching all the comments related to the issue with issue_id ",ID)
+        query = "select comment_ID,user_ID,description,author_name,date from comments where ID = %s"
+        values = (ID,)
         cursor.execute(query, values)
-        id=cursor.fetchall()
+        ID=cursor.fetchall()
         logging.debug(dt_string + " All comments fetched sucessfully...")
         comments_list = []
-        for project in id:
+        for project in ID:
                 comments_dict = {
-                    'comment_id': project[0],
-                    'user_id' : project[1],
+                    'comment_ID': project[0],
+                    'user_ID' : project[1],
                     'description': project[2],
                     'author_name' : project[3],
                     'date' : project[4]
@@ -825,103 +819,34 @@ def displaycomments(id):
         if(len(comments_list)==0 ):
             return jsonify({"error":"no matching results","array ": comments_list }),200
         else:
-            logging.debug(dt_string + " Returning all the comments related to issueId ",id)
+            logging.debug(dt_string + " Returning all the comments related to issueId ",ID)
             return jsonify(comments_list),200
 
 
        
 
-
-########################### UPDATE ISSUE DETAILS #################################
-
-def updateissues(status, issue_id):
-   
-        logging.debug("Inside updateissues function")
-        
-        query = "UPDATE Issue_Details SET status = %s WHERE issue_id=%s"
-        values = (status, issue_id)
-        cursor.execute(query, values)
-        mydb.commit()
-
-        logging.debug("Issue updated: status={}".format(status))
-        return jsonify({"message": "Issue Updated Successfully"}), 200
-
-
-
-############################ DELETE ISSUE DETAILS #################################
-
-def deleteissues(issue_id):
-        logging.debug("Inside deleteissues function")
-        
-
-        check_query = "SELECT * FROM Issue_Details WHERE issue_id = %s"
-        cursor.execute(check_query, (issue_id,))
-        result = cursor.fetchone()
-        if result is None:
-            return jsonify({"error": "Issue not found"}), 400
-        
-        # Delete related records from defect table
-        defect_query = "DELETE FROM Defect WHERE issue_id = %s"
-        values = (issue_id,)
-        cursor.execute(defect_query, values)
-        
-        # Delete related records from Task table
-        task_query = "DELETE FROM Task WHERE issue_id = %s"
-        cursor.execute(task_query, values)
-
-        
-        # Delete related records from issue_workflow table
-        issuewf_query = "DELETE FROM Issueworkflow_Connection WHERE issue_id = %s"
-        cursor.execute(issuewf_query, values)
-    
-        # Delete project details from issue_details table
-        query = "DELETE FROM Issue_Details WHERE issue_id = %s"
-        cursor.execute(query, values)
-        mydb.commit()
-
-        
-        logging.debug("Issue deleted: issue_id={}".format(issue_id))
-        return jsonify({"message": "Issue Deleted successfully"}), 200
-
-
-############################ CREATE DEFECT #################################
-
-
-
-def updatedefects(title, description, severity, defect_sd, defect_ed, priority, estimated_time, file_attachment, defect_id, issue_id):
-        logging.debug("Inside update defects function")
-        query = "UPDATE defect SET title=%s, description = %s,severity=%s,defect_sd=%s, defect_ed=%s, priority=%s, estimated_time=%s, file_attachment=%s WHERE defect_id=%s and issue_id=%s"
-        values = (title, description, severity, defect_sd, defect_ed, priority, estimated_time, file_attachment, defect_id, issue_id)
-        cursor.execute(query, values)
-        mydb.commit()
-
-
-        logging.debug("Defect updated: defect_id={}, issue_id={},title={}, description={}, severity={} ,defect_sd={}, defect_ed={}, priority={}, estimated_time={}, file_attachment={}".format(title, description, severity, defect_sd, defect_ed, priority, estimated_time, file_attachment, defect_id, issue_id))
-        return jsonify({"message": "Defect updated successfully"}), 200
-
-
-def issue_member(issue_id, user_id,project_id):
+def issue_member(issue_id, user_ID,Project_ID):
 
         logging.debug("Inside issue member function")
-        query = "INSERT INTO Issue_Member (issue_id, user_id,project_id) VALUES (%s, %s, %s)"
-        values = (issue_id, user_id,project_id)
+        query = "INSERT INTO Issue_Member (issue_id, user_ID,Project_ID) VALUES (%s, %s, %s)"
+        values = (issue_id, user_ID,Project_ID)
         cursor.execute(query, values)
         mydb.commit()
 
 
-        logging.debug("Defect deleted: issue_id={},user_id={},project_id={}".format(issue_id, user_id,project_id))
+        logging.debug("Defect deleted: issue_id={},user_ID={},Project_ID={}".format(issue_id, user_ID,Project_ID))
         return jsonify({"message": "Issue Members assigned Successfully"}), 200
 
 
-def issuemembers_update(issue_id, user_id, project_id,issueMember_id):
+def issuemembers_update(issue_id, user_ID, Project_ID,issueMember_id):
 
         logging.debug("Inside update issuemembers_update function")
-        query = "UPDATE Issue_Member SET issue_id = %s,user_id = %s, project_id=%s WHERE issueMember_id=%s"
-        values = (issue_id, user_id, project_id,issueMember_id)
+        query = "UPDATE Issue_Member SET issue_id = %s,user_ID = %s, Project_ID=%s WHERE issueMember_id=%s"
+        values = (issue_id, user_ID, Project_ID,issueMember_id)
         cursor.execute(query, values)
         mydb.commit()
 
-        logging.debug("Issue Member Updated: issue_id={}, user_id={}, project_id={},issueMember_id={}".format(issue_id, user_id, project_id,issueMember_id))
+        logging.debug("Issue Member Updated: issue_id={}, user_ID={}, Project_ID={},issueMember_id={}".format(issue_id, user_ID, Project_ID,issueMember_id))
         return jsonify({"message": "Issue_Member Updated Successfully"}), 200
 
 def issuemembers(issueMember_id):
@@ -941,19 +866,19 @@ def issuemembers(issueMember_id):
 ######################################################################
 
 
-def updatestatus(id,status):
+def updatestatus(ID,status):
             """it updates the status based on id"""
             now = datetime.now()
             dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
             logging.debug(dt_string + " Inside updatestatus function.....")
-            query="select * from project_status where id=%s "
-            values=(id,)
+            query="select * from project_status where ID=%s "
+            values=(ID,)
             cursor.execute(query,values)
             a=cursor.fetchone()
             if not a:
                     return jsonify({"error": "Invalid id"}), 400
-            query = "update project_status set status=%s where id = %s;"
-            values= (status,id)
+            query = "update project_status set status=%s where ID = %s;"
+            values= (status,ID)
             cursor.execute(query,values)
             mydb.commit()
             return jsonify({"msg":"status updated sucessfully"}),200
@@ -962,7 +887,7 @@ def updatestatus(id,status):
 #########################################################################################################################
 
 
-def statusadd(id,status):
+def statusadd(ID,status):
         """This endpoint is used to add a comment to a project.
           It expects the project ID, user ID, and the comment description. 
           The comment is then stored in the database, and the newly added comment, along with other comments for that project, is returned."""
@@ -971,15 +896,15 @@ def statusadd(id,status):
         dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
         logging.debug(dt_string + " Inside status add function .....")
         logging.debug(dt_string +  " Adding status to the id....")
-        query = "select * from project_status where id =%s"
-        values = (id,)
+        query = "select * from project_status where ID =%s"
+        values = (ID,)
         cursor.execute(query,values)
         id_status=cursor.fetchone()
         if  id_status:
             return jsonify({"error": "status for this id already present you can't add new status for this id you can update it. "}), 400
         logging.debug(dt_string + " check one done.")
-        query = "INSERT INTO project_status(id,status) VALUES (%s, %s);"
-        values = (id, status)
+        query = "INSERT INTO project_status(ID,status) VALUES (%s, %s);"
+        values = (ID, status)
         cursor.execute(query, values)
         mydb.commit()
         logging.debug(dt_string + " Status successfully added....")
@@ -989,37 +914,37 @@ def statusadd(id,status):
 #############################################################################################
 
 
-def displaystatus(id):
+def displaystatus(ID):
         
         now = datetime.now()
         dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
         logging.debug(dt_string + " Inside displaystatus function.....")
-        logging.debug(dt_string +  " Fetching status related to the project with id ",id)
-        query = "select status from project_status where id = %s"
-        values = (id,)
+        logging.debug(dt_string +  " Fetching status related to the project with id ",ID)
+        query = "select status from project_status where ID = %s"
+        values = (ID,)
         cursor.execute(query, values)
         id1=cursor.fetchall()
         print(id1)
         if(id1 is None):
                 return jsonify({"error":"no status found with this id"}),400
-        logging.debug(dt_string + " displaying status for id  ",id)
+        logging.debug(dt_string + " displaying status for id  ",ID)
         return jsonify(id1),200
 
 
 
-def updatecomments(description,comment_id):
-            """it deletes a comment based on comment_id"""
+def updatecomments(description,comment_ID):
+            """it deletes a comment based on comment_ID"""
             now = datetime.now()
             dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
             logging.debug(dt_string + " Inside update_comments function.....")
-            query="select * from comments where comment_id=%s "
-            values=(comment_id,)
+            query="select * from comments where comment_ID=%s "
+            values=(comment_ID,)
             cursor.execute(query,values)
             a=cursor.fetchone()
             if not a:
-                    return jsonify({"error": "Invalid comment_id"}), 400
-            query = "update comments set description = %s where comment_id=%s;"
-            values= (description , comment_id,)
+                    return jsonify({"error": "Invalid comment_ID"}), 400
+            query = "update comments set description = %s where comment_ID=%s;"
+            values= (description , comment_ID,)
             cursor.execute(query,values)
             mydb.commit()
             return jsonify({"msg":"Comment updated sucessfully"}),200

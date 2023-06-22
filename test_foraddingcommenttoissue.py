@@ -21,7 +21,7 @@ class TestFlask(unittest.TestCase):
 
         # Prepare the data for the new user
         data = {"issue_id":3000,
-                "user_id":2001,
+                "user_ID":2001,
                 "description":"comment added by shreya for projectid 100"}
 
 
@@ -60,7 +60,7 @@ class TestFlask(unittest.TestCase):
         API_ENDPOINT_post = "http://127.0.0.1:5000//add_issue_comment"
 
         # Prepare the data for the new user
-        data = {"user_id":2001,
+        data = {"user_ID":2001,
                 "description":"comment added by shreya for projectid 100"}
 
 
@@ -92,7 +92,7 @@ class TestFlask(unittest.TestCase):
 
         print("#"*50)
         print("Test case id: TCACTI03")
-        print("Test case name: Checking for missing user_id  ")
+        print("Test case name: Checking for missing user_ID  ")
         print("Inside the Test Case ")
 
         # Define the API endpoint for adding a new user
@@ -139,7 +139,7 @@ class TestFlask(unittest.TestCase):
 
         # Prepare the data for the new user
         data = {"issue_id":3000,
-                "user_id":2001
+                "user_ID":2001
                 }
 
 
@@ -179,7 +179,7 @@ class TestFlask(unittest.TestCase):
 
         # Prepare the data for the new user
         data = {"issue_id":"100a",
-                "user_id":2001,
+                "user_ID":2001,
                 "description":"comment added by shreya for projectid 100"}
 
 
@@ -219,7 +219,7 @@ class TestFlask(unittest.TestCase):
 
         # Prepare the data for the new user
         data = {"issue_id":100,
-                "user_id":"2001rgbegtr",
+                "user_ID":"2001rgbegtr",
                 "description":"comment added by shreya for projectid 100"}
 
 
@@ -252,7 +252,7 @@ class TestFlask(unittest.TestCase):
 
         print("#"*50)
         print("Test case id: TCACTI07")
-        print("Test case name: Checking for valid user_id value  ")
+        print("Test case name: Checking for valid user_ID value  ")
         print("Inside the Test Case ")
 
         # Define the API endpoint for adding a new user
@@ -260,7 +260,7 @@ class TestFlask(unittest.TestCase):
 
         # Prepare the data for the new user
         data = {"issue_id":3000,
-                "user_id":2,
+                "user_ID":2,
                 "description":"comment added by shreya for projectid 100"}
 
 

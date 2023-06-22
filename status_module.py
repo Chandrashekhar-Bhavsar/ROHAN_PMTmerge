@@ -28,7 +28,7 @@ def add_status():
         print(data)
         logging.debug(dt_string + " Accepting values for add project status.....")
         if "id" not in data:
-            return jsonify({"error": "Missing 'project_id' in request data"}), 400
+            return jsonify({"error": "Missing 'Project_ID' in request data"}), 400
         if "status" not in data:
             return jsonify({"error": "Missing 'status' in request data"}), 400 
         id=data['id']
