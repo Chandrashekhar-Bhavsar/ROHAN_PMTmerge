@@ -46,6 +46,8 @@ def user_add(Name, Email_ID,hashed_password, Contact,role):#add role after test3
         values = ( Name, Email_ID,hashed_password, Contact,role)#add role after test
         cursor.execute(query, values)
         mydb.commit()
+        
+        
         logging.debug(dt_string + " Details successfully updated into the database....")
 
         return jsonify({"message": "User created successfully."}), 200
@@ -72,6 +74,7 @@ def user_show():
                     }
                     user_list.append(user_dict)
             logging.debug(dt_string + " returning a list of all users...")
+            
             return jsonify(user_list),200
 
 #################################################################################################
@@ -132,6 +135,9 @@ def user_assign(Project_ID,user_ID,role_in_project):
                         'Contact' : project[4]
                     }
                     user_list.append(user_dict)
+                    
+            
+            
             logging.debug(dt_string + " returning a list of all users...")
             return jsonify(user_list),200
 
@@ -181,6 +187,8 @@ def project_commentadd(Project_ID,description,user_ID):
                     'date' : project[4]
                 }
                 comments_list.append(comments_dict)
+        
+        
         logging.debug(dt_string + " returning all the comments associated with project.")
         return jsonify(comments_list),200
 
@@ -227,6 +235,8 @@ def issue_commentadd(issue_id,description,user_ID):
                     'date' : project[5]
                 }
                 comments_list.append(comments_dict)
+        
+        
         logging.debug(dt_string + " Returning the list of all the comments related to this issue...")
         return jsonify(comments_list),200
 
@@ -259,6 +269,8 @@ def displaycomments_projectswise(Project_ID):
                     'date' : project[4]
                 }
                 comments_list.append(comments_dict)
+        
+        
         if(len(comments_list)==0 ):
             return jsonify({"error":"no matching results"}),400
         else:
@@ -295,7 +307,8 @@ def displaycomments_issuewise(issue_id):
                     'date' : project[4]
                 }
                 comments_list.append(comments_dict)
-
+        
+        
         if(len(comments_list)==0 ):
             return jsonify({"error":"no matching results"}),400
         else:
@@ -369,7 +382,8 @@ def updateprojectwise_comments(user_ID, description, comment_ID, Project_ID):
             'date': project[4]
         }
         comments_list.append(comments_dict)
-
+    
+    
     logging.debug(dt_string + " Returing the list of all comments...")
     return jsonify(comments_list)
 
@@ -436,6 +450,8 @@ def updateissuewise_comments(user_ID,description,comment_ID,issue_id):
                         'date' : project[4]
                         }
                         comments_list.append(comments_dict)
+                
+                
                 logging.debug(dt_string + " Returning the comments list for the issue with issue_id ",issue_id)
                 return jsonify(comments_list)
 
@@ -459,18 +475,19 @@ def delete_comments(comment_ID):
             cursor.execute(query,values)
             mydb.commit()
             
+            
             return jsonify({"msg":"Comment deleted sucessfully"}),200
 
 
 
-def create_project_query(user_ID,project_name, project_description, 
+def create_project_query(user_ID,user_name,project_name, project_description, 
                    planned_sd, planned_ed, actual_sd, actual_ed,
                   planned_hours, actual_hours, status, project_lead, 
                   client_name, risk, mitigation):
         cursor = mydb.cursor()
-        query1 = "INSERT INTO Project_Details (Project_Name, Project_Description, Planned_SD, Planned_ED,Actual_SD, Actual_ED, Planned_Hours, Actual_Hours, Status, Project_Lead, Client_Name, Risk, Mitigation) VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        query1 = "INSERT INTO Project_Details (Project_Name, Project_Description, Planned_SD, Planned_ED,Actual_SD, Actual_ED, Planned_Hours, Actual_Hours, Status, Project_Lead, Client_Name, Risk, Mitigation , ownby_id ,ownby_name) VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,%s, %s)"
         values1 = (project_name, project_description, planned_sd, planned_ed, actual_sd, actual_ed,
-                  planned_hours, actual_hours, status, project_lead, client_name, risk, mitigation)
+                  planned_hours, actual_hours, status, project_lead, client_name, risk, mitigation,user_ID,user_name)
         cursor.execute(query1, values1)
         mydb.commit()
         query2 =  "select Project_ID from Project_Details where project_name = %s;"
@@ -482,6 +499,8 @@ def create_project_query(user_ID,project_name, project_description,
         values3 = (user_ID,id[0])
         cursor.execute(query3,values3)
         mydb.commit()
+        
+        
         return jsonify({"message": "Project created successfully"}), 200
 
 
@@ -495,6 +514,8 @@ def update_project_details(project_name, project_description, planned_sd, planne
                   planned_hours, actual_hours, status, project_lead, client_name, risk, mitigation, Project_ID)
         cursor.execute(query, values)
         mydb.commit()
+        
+        
         return jsonify({"message": "Project updated successfully"}), 200
 
 
@@ -508,7 +529,8 @@ def create_issue(Issue_name, Description):
         values = (Issue_name, Description)
         cursor.execute(query, values)
         mydb.commit()
-    
+        
+        
         
         logging.debug("Issue created: issue_name={}, description={}".format(Issue_name, Description))
         return jsonify({"message": "Issue created successfully"}), 200
@@ -524,7 +546,8 @@ def updateissues(status,issue_id):
         values = (status, issue_id)
         cursor.execute(query, values)
         mydb.commit()
-
+        
+        
         logging.debug("Issue updated: status={}".format(status))
         return jsonify({"message": "Issue Updated Successfully"}), 200
 
@@ -539,7 +562,8 @@ def updateissuesdesc(descripition,issue_id):
         values = (descripition, issue_id)
         cursor.execute(query, values)
         mydb.commit()
-
+        
+        
         logging.debug("Issue updated: description={}".format(descripition))
         return jsonify({"message": "Issue Updated Successfully"}), 200
 
@@ -575,6 +599,8 @@ def deleteissues(issue_id):
         query = "DELETE FROM Issue_Details WHERE issue_id = %s"
         cursor.execute(query, values)
         mydb.commit()
+        
+        
 
         
         logging.debug("Issue deleted: issue_id={}".format(issue_id))
@@ -588,6 +614,8 @@ def createtask(issue_id, title, task_sd, task_ed, estimated_time, priority):
         values = (issue_id, title, task_sd, task_ed, estimated_time, priority)
         cursor.execute(query, values)
         mydb.commit()
+        
+        
 
         return jsonify({"message": "Task created successfully"}), 200
 
@@ -599,7 +627,8 @@ def updatetask( title, task_sd, task_ed, estimated_time, priority, file_attachme
         values = ( title, task_sd, task_ed, estimated_time, priority, file_attachment, task_id, issue_id)
         cursor.execute(query, values)
         mydb.commit()
-        mydb.close()
+        
+        
         return jsonify({"message": "Task updated successfully"}), 200
 
 ############################ DELETE TASK #################################
@@ -610,6 +639,8 @@ def deletetask(task_id):
         values = (task_id,)
         cursor.execute(query, values)
         mydb.commit()
+        
+        
 
         logging.debug("Task deleted: task_id={}".format(task_id))
         return jsonify({"message": "Task Deleted successfully"}), 200
@@ -621,6 +652,8 @@ def createdefects(issue_id, title, product, component, component_description, ve
         values = (issue_id, title, product, component, component_description, version,severity, os, summary, defect_sd, defect_ed, priority,estimated_time)
         cursor.execute(query, values)
         mydb.commit()
+        
+        
 
         return jsonify({'message': 'Defect created successfully'}), 200
 
@@ -630,6 +663,8 @@ def updatedefects(issue_id, title, product, component, component_description, ve
         values = (issue_id, title, product, component, component_description, version,severity, os, summary, defect_sd, defect_ed, priority,estimated_time, file_attachment, defect_id)
         cursor.execute(query, values)
         mydb.commit()
+        
+        
 
         return jsonify({'message': 'Defect updated successfully'}), 200
 
@@ -641,6 +676,8 @@ def deletedefect(defect_id):
         values = (defect_id,)
         cursor.execute(query, values)
         mydb.commit()
+        
+        
 
         logging.debug("Defect deleted: defect_id={}".format(defect_id))
         return jsonify({"message": "Defect Deleted successfully"}), 200
@@ -730,6 +767,8 @@ def user_update(user_ID , Name, Email_ID, Contact):#add role after test3
         values = ( Name, Email_ID, Contact,hashed_password,user_ID)#add role after test
         cursor.execute(query, values)
         mydb.commit()
+        
+        
         logging.debug(dt_string + " Details successfully updated into the database....")
 
         return jsonify({"message": "User details updated successfully."}), 200
@@ -752,6 +791,8 @@ def user_delete(user_ID):
         values2 = (user_ID,)
         cursor.execute(query2,values2)
         mydb.commit()
+        
+        
         return jsonify({"msg":"User Successfully deleted."}),200
 
 
@@ -781,7 +822,8 @@ def commentadd(ID, description,user_ID):
         values = (ID, description, user_ID, author_name)
         cursor.execute(query, values)
         mydb.commit()
-
+        
+        
         logging.debug(dt_string + " Comment successfully added....")
         # to fetch newly added member comments
         logging.debug(dt_string + " getting all the comments associated with this project....")
@@ -795,7 +837,7 @@ def displaycomments(ID):
         """This endpoint is used to display all the comments related to a specific issue. 
         It expects the project ID and issue ID and retrieves all the comments associated with that issue from the database.
           The comments are returned as a JSON response."""
-        
+        cursor = mydb.cursor()
         now = datetime.now()
         dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
         logging.debug(dt_string + " Inside displaycomments_issuewise function.....")
@@ -815,7 +857,8 @@ def displaycomments(ID):
                     'date' : project[4]
                 }
                 comments_list.append(comments_dict)
-
+        
+        
         if(len(comments_list)==0 ):
             return jsonify({"error":"no matching results","array ": comments_list }),200
         else:
@@ -832,6 +875,8 @@ def issue_member(issue_id, user_ID,Project_ID):
         values = (issue_id, user_ID,Project_ID)
         cursor.execute(query, values)
         mydb.commit()
+        
+        
 
 
         logging.debug("Defect deleted: issue_id={},user_ID={},Project_ID={}".format(issue_id, user_ID,Project_ID))
@@ -845,6 +890,8 @@ def issuemembers_update(issue_id, user_ID, Project_ID,issueMember_id):
         values = (issue_id, user_ID, Project_ID,issueMember_id)
         cursor.execute(query, values)
         mydb.commit()
+        
+        
 
         logging.debug("Issue Member Updated: issue_id={}, user_ID={}, Project_ID={},issueMember_id={}".format(issue_id, user_ID, Project_ID,issueMember_id))
         return jsonify({"message": "Issue_Member Updated Successfully"}), 200
@@ -857,6 +904,8 @@ def issuemembers(issueMember_id):
         cursor.execute(query, values)
 
         mydb.commit()
+        
+        
 
         logging.debug("Issue Member deleted: issueMember_id={}".format(issueMember_id))
         return jsonify({"message": "Issue Member Deleted successfully"}), 200
@@ -881,6 +930,8 @@ def updatestatus(ID,status):
             values= (status,ID)
             cursor.execute(query,values)
             mydb.commit()
+            
+            
             return jsonify({"msg":"status updated sucessfully"}),200
 
 
@@ -907,6 +958,8 @@ def statusadd(ID,status):
         values = (ID, status)
         cursor.execute(query, values)
         mydb.commit()
+        
+        
         logging.debug(dt_string + " Status successfully added....")
         return jsonify({"msg":"status added Successfully"}),200
 
@@ -927,6 +980,8 @@ def displaystatus(ID):
         print(id1)
         if(id1 is None):
                 return jsonify({"error":"no status found with this id"}),400
+        
+        
         logging.debug(dt_string + " displaying status for id  ",ID)
         return jsonify(id1),200
 
@@ -947,4 +1002,6 @@ def updatecomments(description,comment_ID):
             values= (description , comment_ID,)
             cursor.execute(query,values)
             mydb.commit()
+            
+            
             return jsonify({"msg":"Comment updated sucessfully"}),200

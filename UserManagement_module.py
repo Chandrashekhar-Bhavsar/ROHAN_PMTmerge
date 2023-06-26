@@ -85,8 +85,8 @@ def adduser():
                return jsonify({"error":"email already exists."}),400
         def send_otp_email(receiver_email, otp):
             logging.debug(dt_string + " Entered send_otp_email function....")
-            sender_email = "pratik@infobellit.com"  # Replace with your email address
-            password = "mzygirleuqcwzwtk"  # Replace with your email password
+            sender_email = "techbrutal11@gmail.com"  # Replace with your email address
+            password = "pfpnaxhguopcukvc"  # Replace with your email password
             message = f"Subject: login credentials for Project Management Tool\n\n Your Username is your email.\nYour password is: {otp}"
             logging.debug(dt_string + " Sending email....")
             with smtplib.SMTP("smtp.gmail.com", 587) as server:
@@ -306,6 +306,8 @@ def user_useridwise():
                         'Contact' : project[2]
                     }
                     user_list.append(user_dict)
+        
+       
         logging.debug(dt_string + " returning a list of user details for this user_ID...")
         return jsonify(user_list),200
         

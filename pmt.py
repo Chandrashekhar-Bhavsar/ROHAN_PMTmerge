@@ -27,6 +27,7 @@ file = open("myfile.txt","w")
 
 def ShowEmails():
     try:
+        mydb.cursor()
         now = datetime.now()
         dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
         logging.debug(dt_string + " Inside  ShowEmails api....")
@@ -43,6 +44,8 @@ def ShowEmails():
         values=(Project_ID,)
         cursor.execute(query,values)
         id=cursor.fetchall()
+        
+        
         logging.debug(dt_string + " returning a list of Email_ID that are not associated with project...")
         return jsonify(id),200
         
@@ -62,6 +65,7 @@ def ShowEmails():
         
 def ShowEmailsTeams():
     try:
+        cursor = mydb.cursor()
         now = datetime.now()
         dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
         logging.debug(dt_string + " Inside  ShowEmailsTeams api....")
@@ -78,8 +82,13 @@ def ShowEmailsTeams():
         values=(Project_ID,)
         cursor.execute(query,values)
         id=cursor.fetchall()
+        print(id)
+        l = []
+        for i in range(len(id)):
+            l.append(id[i][0])
+        
         logging.debug(dt_string + " returning a list of Email_ID that are associated with project...")
-        return jsonify(id),200
+        return jsonify(l),200
         
     except KeyError as e:
         # Handle missing key in the request data
@@ -141,6 +150,8 @@ def pm_loginn():
             logging.debug(dt_string + " Email id and password are valid")
             logging.debug(dt_string + " Login api execution completed without errors")
             token = jwt.encode({'username': "Email_ID"}, 'your_secret_key', algorithm='HS256')
+            
+            
             return jsonify({'msg': "login successful","user_detail":users3,'token': token}), 200
 
     except Exception as e:
@@ -164,6 +175,7 @@ def create_projects():
         logging.debug(dt_string+"payload comming from frontend ")
         print(data)
         user_ID=data['user_ID']
+        user_name=data['user_name']
         project_name = data['project_name']
         project_description = data['project_description']
         planned_sd = data['planned_sd']
@@ -178,7 +190,7 @@ def create_projects():
         risk = data['risk']
         mitigation = data['mitigation']
         logging.debug(dt_string+"Calling create project query function ")
-        return create_project_query(user_ID,project_name, project_description, planned_sd, planned_ed, actual_sd, actual_ed,
+        return create_project_query(user_ID,user_name,project_name, project_description, planned_sd, planned_ed, actual_sd, actual_ed,
                                     planned_hours, actual_hours, status, project_lead, client_name, risk, mitigation)
 
     except Exception as e:
@@ -206,6 +218,8 @@ def Assign_User():
             values2 = ( u_id[0],Project_ID)#add role after test
             cursor.execute(query2, values2)
             mydb.commit()
+            
+            
             logging.debug(dt_string + " Details successfully updated into the database....")
             return jsonify({'msg':"Data Inserted"}), 200
     except Exception as e:
@@ -240,6 +254,8 @@ def get_users_from_project():
             user_list.append(user_info)
 
         logging.debug(dt_string + " Users retrieved successfully")
+        
+        
         return jsonify({'users': user_list}), 200
 
     except Exception as e:
@@ -253,7 +269,7 @@ def get_cardprojectdetails():
         user_ID = data['user_ID']
         print("inside the function")
         cursor = mydb.cursor()
-        query = "SELECT * FROM Project_Details p join project_member m on m.Project_ID=p.Project_ID  where m.user_ID=%s;"
+        query = "SELECT * FROM Project_Details p join project_member m on m.Project_ID=p.Project_ID  where p.ownby_id= m.user_ID and m.user_ID=%s  ;"
         value=(user_ID,)
         cursor.execute(query,value)
         projects = cursor.fetchall()
@@ -273,9 +289,13 @@ def get_cardprojectdetails():
                     "project_lead":project[10],
                     "client_name":project[11],
                     "risk":project[12],
-                    "mitigation":project[13]
+                    "mitigation":project[13],
+                    "ownby_id":project[14],
+                    "ownby_name":project[15]
                 }
             project_list.append(project_dict)
+        
+        
         return jsonify(project_list),200
     except Exception as e:
         print("An error occurred:", str(e))
@@ -415,6 +435,8 @@ def ProjectDetails():
                     "mitigation":project[13]
                 }
             project_list.append(project_dict)
+        
+        
         return jsonify(project_dict)
 
     except KeyError as e:
@@ -537,7 +559,8 @@ def get_users_from_project():
                 'Email_ID': user[3]
             }
             user_list.append(user_info)
-
+        
+        
         logging.debug(dt_string + " Users retrieved successfully")
         return jsonify({'users': user_list}), 200
 
@@ -574,7 +597,8 @@ def get_issue_details():
                 'status': row[4]
             }
             Issue_Details.append(issue)
-
+        
+        
         return jsonify(Issue_Details), 200
 
     except Exception as e:
@@ -587,13 +611,13 @@ def get_issue_details():
 
 def issues_explore():
     try:
+        cursor = mydb.cursor()
         now = datetime.now()
         dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
         logging.debug(dt_string + " User has made a call to retrieve users from a project")
         data = request.get_json()
         issue_id = data['issue_id']
-        cursor = mydb.cursor()
-
+        print(data)
         query_task = """ SELECT * FROM Task t join Issue_Details i on t.issue_id = i.issue_id WHERE t.issue_id = %s """
         values = (issue_id,)
         cursor.execute(query_task, values)
@@ -658,7 +682,8 @@ def issues_explore():
                     
                 
                 Issue_Details.append(defect)
-
+        
+        
         return jsonify({'issue_details': Issue_Details}), 200
 
     except Exception as e:
@@ -686,7 +711,8 @@ def get_task_count():
         cursor.execute(query, values)
         result = cursor.fetchone()
         task_count = result[0]
-
+        
+        
         return jsonify({"task_count": task_count}), 200
 
     except Exception as e:
@@ -714,7 +740,8 @@ def get_defect_count():
         cursor.execute(query, values)
         result = cursor.fetchone()
         defect_count = result[0]
-
+        
+        
         return jsonify({"defect_count": defect_count}), 200
 
     except Exception as e:
@@ -819,6 +846,7 @@ def display_comments():
     """
     
     try:
+        
         now = datetime.now()
         dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
         logging.debug(dt_string + " Inside display_issuewise_comments....")
@@ -982,6 +1010,8 @@ def deleteprojects():
         
         
         mydb.commit()
+        
+        
         return jsonify("Done"), 200
 
 
@@ -1048,6 +1078,8 @@ def update_comment():
         print("An error occurred: " + str(e))
         return jsonify({"error": "An error occurred: " + str(e)}), 500
     
+    
+    
 def issuestate_projectwise():
     try:
         now = datetime.now()
@@ -1092,6 +1124,4 @@ def issuestate_projectwise():
         # Handle any other unexpected exceptions
         print("An error occurred: " + str(e))
         return jsonify({"error": "An error occurred: " + str(e)}), 500
-    
-    
     

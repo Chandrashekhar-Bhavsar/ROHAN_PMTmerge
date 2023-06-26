@@ -43,6 +43,8 @@ def createIssue():
             cursor.execute(query2, values2)
             mydb.commit()
             logging.debug("data inserted into the project_issue table ")
+            
+            
             return jsonify({"message": "Issue Created Successfully", "issue_id": issue_id}), 200
 
 
@@ -68,6 +70,7 @@ def updateIssue():
 
             if count == 0:
                 return jsonify({"error": "Issue not found"}), 400
+
         
             return updateissues(status, issue_id)
    
@@ -94,6 +97,7 @@ def updateIssueDesc():
 
             if count == 0:
                 return jsonify({"error": "Issue not found"}), 400
+
         
             return updateissuesdesc(description, issue_id)
    
@@ -153,6 +157,8 @@ def deleteissue():
         cursor.execute(query, values)
         
         mydb.commit()
+        
+        
         return jsonify("Done"), 200
 
 
@@ -186,6 +192,7 @@ def createTask():
         priority = data['priority']
         logging.debug("Values Accepted")
 
+
         return createtask(issue_id, title, task_sd, task_ed, estimated_time, priority)
     
 
@@ -218,7 +225,7 @@ def updateTask():
 
         if count == 0:
             return jsonify({"error": "Task not found"}), 400
-        
+
         
         return updatetask(title, task_sd, task_ed, estimated_time, priority, file_attachment, task_id, issue_id)
 
@@ -258,7 +265,7 @@ def createDefect():
         priority = data['priority']
         estimated_time = data['estimated_time']
         logging.debug('Values Accepted')
-        
+
 
         return createdefects(issue_id, title, product, component, component_description, version,severity, os, summary, defect_sd, defect_ed, priority,estimated_time)
 
@@ -271,6 +278,7 @@ def createDefect():
 def updateDefect():
     try:
         data = request.json
+        print("Payload is : ", data)
         defect_id = data['defect_id']
         issue_id = data['issue_id']
         title = data['title']
@@ -281,20 +289,20 @@ def updateDefect():
         severity = data['severity']
         os = data['os']
         summary = data['summary']
-        defect_sd = data['defect_sd']
-        defect_ed = data['defect_ed']
+        defect_sd = str(data['defect_sd'])
+        defect_ed = str(data['defect_ed'])
         priority = data['priority']
         estimated_time = data['estimated_time']
         file_attachment = data['file_attachment']
 
         cursor = mydb.cursor()
-        query = "SELECT COUNT(*) FROM defect WHERE defect_id=%s"
+        query = "SELECT COUNT(*) FROM Defect WHERE defect_id=%s"
         cursor.execute(query, (defect_id,))
         count = cursor.fetchone()[0]
 
         if count == 0:
             return jsonify({"error": "Defect not found"}), 400
-        
+
         return updatedefects(issue_id, title, product, component, component_description, version,severity, os, summary, defect_sd, defect_ed, priority,estimated_time, file_attachment, defect_id)
 
     except KeyError as e:
@@ -322,7 +330,7 @@ def createissuemember():
                 return jsonify({'error': 'Invalid data type for user_ID'}), 400
             if not isinstance(Project_ID, int):
                 return jsonify({'error': 'Invalid data type for Project_ID'}), 400
- 
+
             return issue_member(issue_id, user_ID,Project_ID)
 
         except KeyError as e:
@@ -410,7 +418,7 @@ def ProjectwiseIssue():
                 'status': row[4]
             }
             issue_details.append(issue)
-
+        
         return jsonify(issue_details), 200
 
     except Exception as e:
@@ -445,9 +453,13 @@ def Assign_Issue():
             values2 = (issue_id,userId,Project_ID)
             cursor.execute(query2, values2)
             mydb.commit()
+            
+            
             print("Data is inserted to issue_member table")
             return jsonify({"msg":"Data is inserted to issue_member table"}), 200
         else:
+            
+            
             return jsonify({"MSG":"issue is already assigned to user"}),200
     except Exception as e:
         logging.error("An error occurred: {}".format(str(e)))
@@ -473,6 +485,8 @@ def update_description_taskid():
         values = (description,task_id)
         cursor.execute(query,values)
         mydb.commit()
+        
+        
         logging.debug(dt_string + "Description updated successfully.")
         return jsonify({"msg" : "Description updated successfully."})
 
@@ -512,6 +526,8 @@ def update_description_defect():
         values = (description,defect_id)
         cursor.execute(query,values)
         mydb.commit()
+        
+        
         logging.debug(dt_string + "Description updated successfully.")
         return jsonify({"msg" : "Description updated successfully."})
 
@@ -535,6 +551,7 @@ def update_description_defect():
         
 def userwiseissue():
     try:
+        cursor = mydb.cursor()
         now = datetime.now()
         dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
         logging.debug(dt_string + " Inside userwiseissue....")
@@ -562,6 +579,8 @@ WHERE im.user_ID = %s;"""
                 'status': row[6]
             }
             issue_details.append(issue)
+        
+        
         print("result of query is ",issue_details)
         return jsonify(issue_details)
         
@@ -579,6 +598,7 @@ WHERE im.user_ID = %s;"""
 
 def issuewiseuser():
     try:
+        mydb.cursor()
         now = datetime.now()
         dt_string = str(now.strftime("%d/%m/%Y %H:%M:%S"))
         logging.debug(dt_string + " Inside userwiseissue....")
@@ -588,28 +608,17 @@ def issuewiseuser():
         values1 = (issue_id,)
         cursor.execute(query1,values1)
         result = cursor.fetchone()
+        if not result:
+            return jsonify("Unassigned"),200
         print("result is ", result)
         user_id=result[0]
         print("id is ", user_id)
-        query2 ="""select * from Users where user_ID=%s;"""
+        query2 ="""select Email_ID from Users where user_ID=%s;"""
         values2 = (user_id,)
         cursor.execute(query2,values2)
-        User_details=cursor.fetchall()
-        print(User_details)
-        user_details = []
-        for row in User_details:
-            issue = {
-                'user_ID': row[0],
-                'role': row[1],
-                'name': row[2],
-                'email_id': row[3],
-                'contact': row[5]
+        User_details=cursor.fetchone()
 
-            }
-            user_details.append(issue)
-        print("result of query is ", user_details)
-
-        return jsonify({"user to given issue are ":user_details})
+        return jsonify(User_details)
         
     except KeyError as e:
         # Handle missing key in the request data
